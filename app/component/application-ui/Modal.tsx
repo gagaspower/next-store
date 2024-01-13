@@ -15,7 +15,7 @@ const Modal: FC<TModal> = ({ isOpen, handleClose, children, title }) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="relative z-10"
+          className="relative z-30"
           onClose={handleClose}
           initialFocus={completeButtonRef}
         >

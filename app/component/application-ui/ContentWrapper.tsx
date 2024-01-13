@@ -3,5 +3,5 @@ export default function ContentWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="bg-white p-5 rounded-md">{children}</div>;
+  return <div className="bg-white p-5 rounded-md relative">{children}</div>;
 }

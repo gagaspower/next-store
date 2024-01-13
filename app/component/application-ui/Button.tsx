@@ -71,17 +71,22 @@ export const BtnAdd: FC<TBtnAdd> = ({ onClick, label }) => {
 };
 
 export const BtnSubmit = ({
+  type,
   label,
   loading,
+  onClick,
 }: {
+  type?: "button" | "reset" | "submit";
   label: string;
   loading?: boolean;
+  onClick?: () => void;
 }) => {
   return (
     <>
       <button
-        type="submit"
+        type={type ?? "submit"}
         className="inline-flex items-center justify-center h-10 gap-2 px-5 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none"
+        onClick={onClick}
       >
         <span>{label}</span>
         {loading ? (
@@ -121,11 +126,11 @@ export const BtnCancel: FC<TBtnCancel> = ({ onClick, label }) => {
   return (
     <button
       type="button"
-      className="btn bg-gray-200 rounded-md flex group hover:bg-gray-300"
+      className="bg-gray-200 rounded-md inline-flex group hover:bg-gray-300 h-10 px-4 py-2.5"
       onClick={onClick}
     >
       <span className="flex flex-row text-sm text-gray-500 items-center group-hover:text-gray-600">
-        <BsArrowCounterclockwise size={22} /> {label}
+        {label}
       </span>
     </button>
   );

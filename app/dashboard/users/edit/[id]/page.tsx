@@ -1,6 +1,6 @@
 "use client";
 
-import { TUser, getUserById, updateUser } from "@/app/api/users";
+import { getUserById, updateUser } from "@/app/api/users";
 import { BtnSubmit } from "@/app/component/application-ui/Button";
 import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
 
@@ -12,6 +12,7 @@ import { useToastAlert } from "@/app/component/application-ui/Toast";
 import SelectInput from "@/app/component/application-ui/form/SelectInput";
 import TextInput from "@/app/component/application-ui/form/TextInput";
 import { roles } from "@/app/hook/useRole";
+import { TUser } from "@/app/interface/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useParams } from "next/navigation";
@@ -37,11 +38,13 @@ const EditUser = () => {
   };
 
   const schema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string().email().required("Email is required"),
+    name: Yup.string().required("Nama User wajib diisi"),
+    email: Yup.string()
+      .email("Email tidak benar")
+      .required("Email wajib diisi"),
     roles: Yup.mixed()
-      .oneOf(["user", "admin"] as const)
-      .defined(),
+      .defined("Role wajib dipilih")
+      .oneOf(["user", "admin"] as const, "Role wajib dipilih"),
     password: Yup.string()
       .nullable()
       .test({
@@ -52,16 +55,19 @@ const EditUser = () => {
           }
           if (value.length < 6) {
             return ctx.createError({
-              message: "Password length minimum 6 char",
+              message: "Minimal panjang password 6 karakter",
             });
           }
           if (value.length > 8) {
             return ctx.createError({
-              message: "Password length maximum 8 char",
+              message: "Maksimal panjang password 8 karakter",
             });
           }
           if (value && !value.match(/^[a-zA-Z0-9]+$/)) {
-            return ctx.createError({ message: "Password only alpha numeric" });
+            return ctx.createError({
+              message:
+                "Password hanya diizinkan dengan kombinasi huruf dan atau angka ( tanpa spasi )",
+            });
           }
           return true;
         },
@@ -127,7 +133,6 @@ const EditUser = () => {
             name="name"
             value={formik.values.name}
             onChange={formik.handleChange}
-            maxWidth="md"
             error={formik.errors.name}
           />
           <Jarak />
@@ -137,7 +142,6 @@ const EditUser = () => {
             name="email"
             value={formik.values.email}
             onChange={formik.handleChange}
-            maxWidth="md"
             error={formik.errors.email}
           />
 
@@ -164,7 +168,6 @@ const EditUser = () => {
             name="password"
             value={formik.values.password}
             onChange={formik.handleChange}
-            maxWidth="md"
             error={formik.errors.password}
           />
         </form>

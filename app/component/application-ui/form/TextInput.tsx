@@ -9,6 +9,7 @@ type TInput = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
   error?: string;
+  isDisable?: boolean;
 };
 
 const TextInput: FC<TInput> = ({
@@ -20,10 +21,13 @@ const TextInput: FC<TInput> = ({
   onChange,
   maxWidth,
   error,
+  isDisable,
 }) => {
   return (
     <label
-      className={`form-control w-full ${maxWidth ? `max-w-${maxWidth}` : ""}`}
+      className={`form-control w-full ${
+        maxWidth ? `max-w-${maxWidth}` : "max-w-lg"
+      }`}
     >
       {label && (
         <div className="label">
@@ -36,11 +40,12 @@ const TextInput: FC<TInput> = ({
         name={name}
         placeholder={placeholder}
         className={`input input-bordered w-full text-sm ${
-          maxWidth ? `max-w-${maxWidth}` : ""
+          maxWidth ? `max-w-${maxWidth}` : "max-w-lg"
         } ${error ? "border-pink-600" : ""}`}
         value={value}
         onChange={onChange}
         autoComplete="off"
+        disabled={isDisable ? true : false}
       />
       {error ? (
         <p className="mt-1 text-pink-600 text-xs italic">*{error}</p>

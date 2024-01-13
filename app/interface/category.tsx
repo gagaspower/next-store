@@ -1,12 +1,10 @@
 export type TCategory = {
   id?: number;
-  categoryName: string;
-  categorySlug?: string;
+  category_name: string;
+  category_slug?: string;
 };
 
 export interface TCategoryData {
-  status: boolean;
-  path: string;
-  statusCode: number;
-  res: TCategory[];
+  message: string;
+  data: TCategory[];
 }

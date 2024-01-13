@@ -2,7 +2,7 @@ import { instance } from "../config/const";
 import { TCategory, TCategoryData } from "../interface/category";
 
 export const findAllCategory = async (): Promise<TCategoryData> => {
-  const result = await instance.get(`/category`);
+  const result = await instance.get(`/cat`);
   return result?.data;
 };
 
@@ -16,9 +16,9 @@ export const addCategory = async ({
   try {
     let response;
     if (id === 0) {
-      response = await instance.post(`/category`, data);
+      response = await instance.post(`/cat/create`, data);
     } else {
-      response = await instance.put(`/category/${id}`, data);
+      response = await instance.put(`/cat/update/${id}`, data);
     }
     return response?.data;
   } catch (error: any | unknown) {
@@ -28,8 +28,8 @@ export const addCategory = async ({
 
 export const getCategoryById = async ({ id }: { id: number }) => {
   try {
-    const response = await instance.get(`/category/${id}`);
-    return response.data?.res;
+    const response = await instance.get(`/cat/${id}`);
+    return response.data.data;
   } catch (error: any) {
     throw error?.message;
   }
@@ -37,7 +37,7 @@ export const getCategoryById = async ({ id }: { id: number }) => {
 
 export const deleteCategory = async ({ id }: { id: number }) => {
   try {
-    const resp = await instance.delete(`/category/${id}`);
+    const resp = await instance.delete(`/cat/delete/${id}`);
     return resp.data;
   } catch (error: any) {
     throw error?.message;

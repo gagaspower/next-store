@@ -5,7 +5,9 @@ import Modal from "@/app/component/application-ui/Modal";
 import SpinLoading from "@/app/component/application-ui/Spinner";
 import Tables from "@/app/component/application-ui/Tables";
 import { useToastAlert } from "@/app/component/application-ui/Toast";
-import { ProductData, TProduct } from "@/app/interface/product";
+import { TProduct, TProductData } from "@/app/interface/product";
+import { numberWithCommas } from "@/app/utils/func";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,7 +21,7 @@ function Product() {
   const [modalConfirm, setModalConfirm] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
-  const { isPending, data } = useQuery<TProduct>({
+  const { isPending, data } = useQuery<TProductData>({
     queryKey: ["fetch-all-product", page],
     queryFn: async () => await findAllProduct({ page }),
   });
@@ -27,17 +29,28 @@ function Product() {
   const columns = useMemo(
     () => [
       {
-        label: "SKU",
-        key: "productSku",
+        label: "Sku",
+        key: "product_sku",
       },
       {
         label: "Nama Produk",
-        key: "productName",
+        key: "product_name",
+      },
+      {
+        label: "Stok",
+        key: "product_stock",
+      },
+      {
+        label: "Harga",
+        key: "product_price",
+        formatter: (item: TProduct) => {
+          return numberWithCommas(item?.product_price);
+        },
       },
       {
         label: "Aksi",
         key: "aksi",
-        formatter: (item: ProductData) => {
+        formatter: (item: TProduct) => {
           return (
             <div className="flex flex-row gap-1">
               <Link
@@ -48,11 +61,7 @@ function Product() {
                   <BsFillPencilFill />
                 </span>
               </Link>
-              {/* <button
-                type="button"
-                className="border border-gray-300 rounded-md p-2 hover:bg-gray-200"
-                onClick={() => console.log(item)}
-              ></button> */}
+
               <button
                 type="button"
                 className="border border-gray-300 rounded-md p-2 hover:bg-gray-200"
@@ -78,7 +87,7 @@ function Product() {
     setPage((prevPage) => prevPage - 1);
   };
 
-  const handleModalConfirm = (row: ProductData) => {
+  const handleModalConfirm = (row: TProduct) => {
     const id: number = row.id as number;
     setModalConfirm(!modalConfirm);
     setSelectedId(id);
@@ -102,6 +111,13 @@ function Product() {
 
   return (
     <ContentWrapper>
+      <div className="flex justify-end mb-3">
+        <Link href="/dashboard/attribute" className="">
+          <span className="text-sm text-blue-400 italic font-poppins underline">
+            + Attribute Produk
+          </span>
+        </Link>
+      </div>
       <div className="flex mb-3">
         <button
           type="button"
@@ -117,10 +133,12 @@ function Product() {
         <SpinLoading />
       ) : (
         <Tables
-          data={data?.res?.result?.data}
-          meta={data?.res?.result?.meta}
+          data={data?.data?.data}
+          pagination={true}
           columns={columns}
-          page={page}
+          current_page={data?.data?.current_page}
+          per_page={data?.data?.per_page}
+          total_data={data?.data?.total}
           handleNext={handleNext}
           handlePrev={handlePrev}
         />

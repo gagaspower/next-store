@@ -1,43 +1,34 @@
-import { TPaginate } from "./paginate";
-
-export type TVariant = {
-  id?: number;
-  variant: string;
-  variantStock: number;
-  variantPrice: number;
-};
-
-export type TAttribute = {
-  id?: number;
-  attributeKey1: string;
-  attributeKey2: string;
-  attributeStock: number;
-  attributePrice: number;
-};
-
-export type ProductData = {
-  id?: number;
-  productSku: string;
-  productName: string;
-  productSlug?: string;
-  productDesc?: any;
-  productCategoryId: any;
-  productStock?: number;
-  productPrice?: number;
-  productImage: File | null;
-  userId?: number;
-  isVariantActive?: boolean;
-  variants?: TVariant[];
-};
+import { TCategory } from "./category";
 
 export type TProduct = {
-  path: string;
-  status: boolean;
-  statusCode: number;
-  res: {
-    result: {
-      data: ProductData[];
-      meta: TPaginate;
-    };
+  id?: number;
+  product_name: string;
+  product_slug?: string;
+  product_sku: string;
+  product_desc: any;
+  product_category_id: any;
+  product_stock: number;
+  product_price: number;
+  product_weight: number;
+  product_image: File | null;
+  category?: TCategory;
+};
+
+export type TProductData = {
+  message: string;
+  data: {
+    current_page: number;
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: any[];
+    next_page_url?: string;
+    path: string;
+    per_page: number;
+    prev_page_url?: string;
+    to: number;
+    total: number;
+    data: TProduct[];
   };
 };

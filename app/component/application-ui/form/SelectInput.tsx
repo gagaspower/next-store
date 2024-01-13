@@ -18,7 +18,7 @@ const SelectInput: FC<TSelectProps> = ({
   error,
 }) => {
   return (
-    <label className="form-control w-full max-w-md">
+    <label className="form-control w-full max-w-lg">
       {label && (
         <div className="label">
           <span className="label-text font-poppins text-sm">{label} :</span>

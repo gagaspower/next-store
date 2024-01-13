@@ -1,50 +1,14 @@
-import { AiTwotoneUpSquare } from "react-icons/ai";
 import { instance } from "../config/const";
+import { TUser, TUserData } from "../interface/user";
 
-export interface IMeta {
-  current_page: number;
-  per_page: number;
-  total_data: number;
-  total_page: number;
-}
-
-export type TUser = {
-  id?: number;
-  email: string;
-  name: string;
-  roles: string;
-  password?: string | undefined;
-};
-
-export type IUserResult = {
-  status: boolean;
-  path: string;
-  statusCode: number;
-  res: {
-    meta?: IMeta;
-    data: TUser[];
-  };
-};
-
-export interface ISingleUser {
-  status: boolean;
-  path: string;
-  statusCode: number;
-  res: TUser | undefined;
-}
-
-export const findAllUser = async ({
-  page,
-}: {
-  page: number;
-}): Promise<IUserResult> => {
-  const response = await instance.get(`/users?page=${page}`);
+export const findAllUser = async ({ page }: { page: number }) => {
+  const response = await instance.get(`/user?page=${page}`);
   return response?.data;
 };
 
 export const createUser = async (data: TUser) => {
   try {
-    const response = await instance.post(`/users`, data);
+    const response = await instance.post(`/user/create`, data);
     return response?.data;
   } catch (error: any | unknown) {
     throw error?.response?.data?.message;
@@ -53,8 +17,8 @@ export const createUser = async (data: TUser) => {
 
 export const getUserById = async ({ id }: { id: number }): Promise<TUser> => {
   try {
-    const response = await instance.get(`/users/${id}`);
-    return response.data?.res;
+    const response = await instance.get(`/user/${id}`);
+    return response.data.data;
   } catch (error: any) {
     throw error?.message;
   }
@@ -62,23 +26,12 @@ export const getUserById = async ({ id }: { id: number }): Promise<TUser> => {
 
 export const updateUser = async (data: TUser) => {
   try {
-    let body = {};
-    if (data.password === "" || !data.password) {
-      body = {
-        name: data?.name,
-        email: data?.email,
-        roles: data?.roles,
-      };
-    } else {
-      body = {
-        name: data?.name,
-        email: data?.email,
-        roles: data?.roles,
-        password: data?.password,
-      };
-    }
-
-    const response = await instance.put(`/users/${data?.id}`, body);
+    const response = await instance.put(`/user/update/${data?.id}`, {
+      name: data?.name,
+      email: data?.email,
+      roles: data?.roles,
+      password: data?.password,
+    });
     return response?.data;
   } catch (error: any | unknown) {
     throw error?.response?.data?.message;
@@ -87,7 +40,7 @@ export const updateUser = async (data: TUser) => {
 
 export const deleteUser = async ({ id }: { id: number }): Promise<any> => {
   try {
-    const res = await instance.delete(`/users/${id}`);
+    const res = await instance.delete(`/user/delete/${id}`);
     return res.data;
   } catch (error: any | unknown) {
     throw error?.message;

@@ -1,40 +1,57 @@
 import { instance } from "../config/const";
 
-import { TProduct, TVariant } from "../interface/product";
+import { TProductData } from "../interface/product";
+
+type TProductAttr = {
+  varian_group: string;
+  varian_item: string;
+};
+
+type TVariantStock = {
+  product_varian_name: string;
+  product_varian_stock: number;
+  product_varian_price: number;
+  product_varian_sku?: string;
+};
 
 export const findAllProduct = async ({
   page,
 }: {
   page: number;
-}): Promise<TProduct> => {
+}): Promise<TProductData> => {
   const response = await instance.get(`/product?page=${page}`);
+
   return response?.data;
 };
 
 export const createProduct = async ({
   data,
-  variants,
+  product_varian,
+  product_varian_stock,
+  isVariants,
 }: {
   data: any;
-  variants: TVariant[];
+  product_varian?: TProductAttr[];
+  product_varian_stock?: TVariantStock[];
+  isVariants: boolean;
 }) => {
   try {
-    if (variants.length > 0) {
-      data.productStock = 0;
-      data.productPrice = 0;
-    }
-
     const formData = new FormData();
-    formData.append("productSku", data.productSku);
-    formData.append("productName", data.productName);
-    formData.append("productDesc", data.productDesc);
-    formData.append("productStock", data?.productStock);
-    formData.append("productPrice", data?.productPrice);
-    formData.append("productCategoryId", data.productCategoryId);
-    formData.append("productImage", data.productImage);
-    formData.append("variants", JSON.stringify(variants || []));
-
-    const response = await instance.post(`/product`, formData, {
+    formData.append("product_sku", data.product_sku);
+    formData.append("product_name", data.product_name);
+    formData.append("product_desc", data.product_desc);
+    formData.append("product_stock", data?.product_stock);
+    formData.append("product_price", data?.product_price);
+    formData.append("product_category_id", data.product_category_id);
+    formData.append("product_image", data.product_image);
+    formData.append("product_weight", data.product_weight);
+    formData.append("isVarian", JSON.stringify(isVariants));
+    formData.append("product_varian", JSON.stringify(product_varian));
+    formData.append(
+      "product_varian_stock",
+      JSON.stringify(product_varian_stock)
+    );
+    const response = await instance.post(`/product/create`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -47,7 +64,7 @@ export const createProduct = async ({
 
 export const deleteProduct = async ({ id }: { id: number }): Promise<any> => {
   try {
-    const res = await instance.delete(`/product/${id}`);
+    const res = await instance.delete(`/product/delete/${id}`);
     return res.data;
   } catch (error: any) {
     throw error?.message;
@@ -55,34 +72,43 @@ export const deleteProduct = async ({ id }: { id: number }): Promise<any> => {
 };
 
 export const showProduct = async ({ id }: { id: number }) => {
-  const { data } = await instance.get(`/product/${id}`);
-  return data.res.result;
+  const response = await instance.get(`/product/${id}`);
+
+  return response?.data?.data;
 };
 
 export const updateProduct = async ({
   id,
   data,
-  variants,
+  product_varian,
+  product_varian_stock,
+  isVariants,
 }: {
   id: number;
   data: any;
-  variants: TVariant[];
+  product_varian?: TProductAttr[];
+  product_varian_stock?: TVariantStock[];
+  isVariants: boolean;
 }) => {
   try {
-    if (variants.length > 0) {
-      data.productStock = 0;
-      data.productPrice = 0;
-    }
-
     const formData = new FormData();
-    formData.append("productSku", data.productSku);
-    formData.append("productName", data.productName);
-    formData.append("productDesc", data.productDesc);
-    formData.append("productStock", data?.productStock);
-    formData.append("productPrice", data?.productPrice);
-    formData.append("productCategoryId", data.productCategoryId);
-    formData.append("productImage", data.productImage);
-    formData.append("variants", JSON.stringify(variants || []));
+    formData.append("product_sku", data.product_sku);
+    formData.append("product_name", data.product_name);
+    formData.append("product_desc", data.product_desc);
+    formData.append("product_stock", data?.product_stock);
+    formData.append("product_price", data?.product_price);
+    formData.append("product_category_id", data.product_category_id);
+    formData.append("product_weight", data.product_weight);
+    formData.append("isVarian", JSON.stringify(isVariants));
+    formData.append("product_varian", JSON.stringify(product_varian));
+    formData.append(
+      "product_varian_stock",
+      JSON.stringify(product_varian_stock)
+    );
+
+    if (data.product_image) {
+      formData.append("product_image", data.product_image);
+    }
 
     const response = await instance.post(`/product/update/${id}`, formData, {
       headers: {

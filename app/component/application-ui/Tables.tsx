@@ -1,5 +1,4 @@
 "use client";
-import { TPaginate } from "@/app/interface/paginate";
 import React, { FC } from "react";
 
 type THeader = {
@@ -11,8 +10,11 @@ type THeader = {
 type TData = {
   columns?: THeader[];
   data?: any[];
-  meta?: TPaginate;
-  page?: number;
+  pagination: boolean;
+  current_page?: number;
+  per_page?: number;
+  last_page?: number;
+  total_data?: number;
   limit?: number;
   handleNext?: () => void;
   handlePrev?: () => void;
@@ -21,12 +23,18 @@ type TData = {
 const Tables: FC<TData> = ({
   columns,
   data,
-  meta,
-  page,
+  pagination,
+  current_page,
+  per_page,
+  last_page,
+  total_data,
   limit,
   handleNext,
   handlePrev,
 }) => {
+  const total_page: number =
+    total_data && per_page ? Math.ceil(total_data / per_page) : 0;
+
   return (
     <div className="rounded-lg border border-gray-200">
       <div className="overflow-x-auto rounded-t-lg">
@@ -64,13 +72,13 @@ const Tables: FC<TData> = ({
         </table>
       </div>
 
-      {meta ? (
+      {pagination ? (
         <div className="rounded-b-lg border-t border-gray-200 px-4 py-2">
           <div className="flex justify-end gap-5 text-xs font-medium items-center ">
             <button
               type="button"
               className={`inline-flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-900 rtl:rotate-180 ${
-                page === 1
+                current_page === 1
                   ? "btn-disabled cursor-not-allowed"
                   : "hover:bg-gray-300 hover:text-gray-500"
               }`}
@@ -92,13 +100,13 @@ const Tables: FC<TData> = ({
             </button>
 
             <span className="max-w-8">
-              {page} / {meta?.total_page}
+              {current_page} / {total_page}
             </span>
 
             <button
               type="button"
               className={`inline-flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-900 rtl:rotate-180 ${
-                page === meta?.total_page
+                current_page === total_page
                   ? "btn-disabled cursor-not-allowed"
                   : "hover:bg-gray-300 hover:text-gray-500"
               }`}

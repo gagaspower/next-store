@@ -1,10 +1,11 @@
 "use client";
-import { IUserResult, TUser, deleteUser, findAllUser } from "@/app/api/users";
+import { deleteUser, findAllUser } from "@/app/api/users";
 import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
 import Modal from "@/app/component/application-ui/Modal";
 import SpinLoading from "@/app/component/application-ui/Spinner";
 import Tables from "@/app/component/application-ui/Tables";
 import { useToastAlert } from "@/app/component/application-ui/Toast";
+import { TUser, TUserData } from "@/app/interface/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,7 +20,7 @@ function UserPage() {
   const [page, setPage] = useState<number>(1);
 
   const [selectedId, setSelectedId] = useState<TUser>({} as TUser);
-  const { isPending, data } = useQuery<IUserResult>({
+  const { isPending, data } = useQuery({
     queryKey: ["fetch-all-user", page],
     queryFn: async () => await findAllUser({ page }),
   });
@@ -120,10 +121,12 @@ function UserPage() {
         <SpinLoading />
       ) : (
         <Tables
-          data={data?.res?.data}
-          meta={data?.res?.meta}
+          data={data?.data?.data}
+          pagination={true}
+          current_page={data?.data?.current_page}
+          per_page={data?.data?.per_page}
+          total_data={data?.data?.total}
           columns={columns}
-          page={page}
           handleNext={handleNext}
           handlePrev={handlePrev}
         />

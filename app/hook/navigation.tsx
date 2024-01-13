@@ -20,4 +20,9 @@ export const navigations = [
     url: "/dashboard/users",
     icon: <BsFillPeopleFill size={18} />,
   },
+  {
+    label: "Example",
+    url: "/dashboard/example",
+    icon: <BsFillPeopleFill size={18} />,
+  },
 ];
