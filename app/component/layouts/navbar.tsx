@@ -1,7 +1,18 @@
+import withAuth from "@/app/hook/withAuth";
 import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 
 function Navbar() {
+  // const handleLogout = async () => {
+  //   try {
+  //     await instance.post(`/auth/logout`);
+  //     localStorage.removeItem("auth");
+
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // };
+
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
@@ -9,20 +20,19 @@ function Navbar() {
           <AiOutlineMenu />
         </label>
       </div>
-      <div className="flex-none">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <a>Link</a>
-          </li>
+      <div className="flex-none z-20">
+        <ul className="menu menu-horizontal px-1 w-full">
           <li>
             <details>
-              <summary>Parent</summary>
-              <ul className="p-2 bg-base-100 rounded-t-none">
+              <summary>ff</summary>
+              <ul className="p-2 bg-base-100 rounded-t-none -translate-x-40 w-56">
                 <li>
-                  <a>Link 1</a>
+                  <a>Update Password</a>
                 </li>
                 <li>
-                  <a>Link 2</a>
+                  <button type="button" onClick={() => console.log("tes")}>
+                    <span>Logout</span>
+                  </button>
                 </li>
               </ul>
             </details>
@@ -33,4 +43,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default withAuth(Navbar);

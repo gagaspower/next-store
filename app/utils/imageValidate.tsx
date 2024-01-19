@@ -1,6 +1,6 @@
 /** yup form validation */
 export const MAX_FILE_SIZE: number = 2048000; // 2MB
-
+export const BANNER_MAX_FILE_SIZE: number = 5120000; // 2MB
 type TValidFileExtensions = {
   [key: string]: string[];
 };

@@ -1,136 +1,178 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { IAuthLogin } from "../interface/auth";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import TextInput from "../component/application-ui/form/TextInput";
+
+import { useRouter } from "next/navigation";
+import { publicApi } from "../config/const";
+
+import withAuth from "../hook/withAuth";
+import { useSessionContext } from "../context/sessionProvider";
 
 const LoginAuth = () => {
+  const router = useRouter();
+  const { sessionAuth, setSessionAuth } = useSessionContext();
+  const [loading, setLoading] = useState<boolean>(false);
+  const { roles } = sessionAuth.session_id;
+  const { token } = sessionAuth;
+
+  const initialValue: IAuthLogin = {
+    email: "",
+    password: "",
+  };
+
+  const schema = Yup.object({
+    email: Yup.string()
+      .email("Email tidak benar")
+      .required("Email wajib diisi"),
+    password: Yup.string().test({
+      name: "is-password",
+      test(value, ctx) {
+        if (!value) {
+          return ctx.createError({ message: "Password wajib diisi" });
+        }
+        if (value.length < 6) {
+          return ctx.createError({
+            message: "Password terlalu pendek",
+          });
+        }
+        if (value.length > 8) {
+          return ctx.createError({
+            message: "Password terlalu panjang",
+          });
+        }
+        if (value && !value.match(/^[a-zA-Z0-9]+$/)) {
+          return ctx.createError({
+            message: "Password tidak diizinkan",
+          });
+        }
+        return true;
+      },
+    }),
+  });
+
+  const formik = useFormik({
+    initialValues: initialValue,
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      const { email, password } = values;
+      await signIn({ email, password });
+    },
+  });
+
+  const signIn = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    setLoading(true);
+    try {
+      const response = await publicApi.post(`/auth/login`, {
+        email,
+        password,
+      });
+      localStorage.setItem("auth", JSON.stringify(response?.data?.data));
+      setSessionAuth(response?.data?.data);
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      throw error.message;
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      router.replace("/dashboard");
+    }
+  }, [token, router]);
+
+  const Spinner = () => {
+    return (
+      <span className="relative only:-mx-5">
+        <svg
+          className="w-5 h-5 text-white animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          role="graphics-symbol"
+          aria-labelledby="title-10 desc-10"
+        >
+          <title id="title-10">Icon title</title>
+          <desc id="desc-10">A more detailed description of the icon</desc>
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      </span>
+    );
+  };
+
   return (
-    <form action="#" className="mt-8 grid grid-cols-6 gap-6">
-      <div className="col-span-6 sm:col-span-3">
-        <label
-          htmlFor="FirstName"
-          className="block text-sm font-medium text-gray-700"
-        >
-          First Name
-        </label>
+    <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          Sign in to your account
+        </h1>
+        <form className="space-y-4 md:space-y-6" onSubmit={formik.handleSubmit}>
+          <div>
+            <TextInput
+              label="Email"
+              type="email"
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              maxWidth="lg"
+              error={formik.errors.email}
+            />
+          </div>
+          <div>
+            <TextInput
+              label="Password"
+              type="password"
+              name="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              maxWidth="lg"
+              error={formik.errors.password}
+            />
+          </div>
 
-        <input
-          type="text"
-          id="FirstName"
-          name="first_name"
-          className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-        />
+          <button
+            type="submit"
+            className={`flex items-center justify-center w-full gap-2 rounded-md p-2 bg-blue-500 hover:bg-blue-700
+             ${loading ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-700"}`}
+            disabled={loading ? true : false}
+          >
+            <span className="text-sm text-white">Login</span>
+            {loading ? <Spinner /> : null}
+          </button>
+          <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+            Belum punya akun?{" "}
+            <a
+              href="#"
+              className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+            >
+              Daftar
+            </a>
+          </p>
+        </form>
       </div>
-
-      <div className="col-span-6 sm:col-span-3">
-        <label
-          htmlFor="LastName"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Last Name
-        </label>
-
-        <input
-          type="text"
-          id="LastName"
-          name="last_name"
-          className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-        />
-      </div>
-
-      <div className="col-span-6">
-        <label
-          htmlFor="Email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          {" "}
-          Email{" "}
-        </label>
-
-        <input
-          type="email"
-          id="Email"
-          name="email"
-          className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-        />
-      </div>
-
-      <div className="col-span-6 sm:col-span-3">
-        <label
-          htmlFor="Password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          {" "}
-          Password{" "}
-        </label>
-
-        <input
-          type="password"
-          id="Password"
-          name="password"
-          className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-        />
-      </div>
-
-      <div className="col-span-6 sm:col-span-3">
-        <label
-          htmlFor="PasswordConfirmation"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Password Confirmation
-        </label>
-
-        <input
-          type="password"
-          id="PasswordConfirmation"
-          name="password_confirmation"
-          className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-        />
-      </div>
-
-      <div className="col-span-6">
-        <label htmlFor="MarketingAccept" className="flex gap-4">
-          <input
-            type="checkbox"
-            id="MarketingAccept"
-            name="marketing_accept"
-            className="h-5 w-5 rounded-md border-gray-200 bg-white shadow-sm"
-          />
-
-          <span className="text-sm text-gray-700">
-            I want to receive emails about events, product updates and company
-            announcements.
-          </span>
-        </label>
-      </div>
-
-      <div className="col-span-6">
-        <p className="text-sm text-gray-500">
-          By creating an account, you agree to our
-          <a href="#" className="text-gray-700 underline">
-            {" "}
-            terms and conditions{" "}
-          </a>
-          and
-          <a href="#" className="text-gray-700 underline">
-            privacy policy
-          </a>
-          .
-        </p>
-      </div>
-
-      <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-        <button className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500">
-          Create an account
-        </button>
-
-        <p className="mt-4 text-sm text-gray-500 sm:mt-0">
-          Already have an account?
-          <a href="#" className="text-gray-700 underline">
-            Log in
-          </a>
-          .
-        </p>
-      </div>
-    </form>
+    </div>
   );
 };
 
-export default LoginAuth;
+export default withAuth(LoginAuth);

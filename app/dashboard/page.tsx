@@ -1,13 +1,14 @@
-import React from "react";
-import Tables from "../component/application-ui/Tables";
+"use client";
+import React, { FC } from "react";
 import ContentWrapper from "../component/application-ui/ContentWrapper";
-import { BsPlus } from "react-icons/bs";
-function Home() {
+import withAuth from "../hook/withAuth";
+
+const Home: FC = () => {
   return (
     <ContentWrapper>
       <div>Hello world</div>
     </ContentWrapper>
   );
-}
+};
 
-export default Home;
+export default withAuth(Home);

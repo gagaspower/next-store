@@ -1,3 +1,4 @@
+"use client";
 import SideLogo from "../component/layouts/SideLogo";
 import SideNav from "../component/layouts/SideNav";
 import Navbar from "../component/layouts/navbar";
@@ -12,12 +13,15 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <div className="drawer lg:drawer-open">
+      <div className="drawer lg:drawer-open ">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col min-h-screen">
           <Navbar />
           {/* Page content here */}
-          <div className="p-3">{children}</div>
+          <div className="p-3">
+            {children}
+            {/* {children} */}
+          </div>
         </div>
         <div className="drawer-side">
           <label

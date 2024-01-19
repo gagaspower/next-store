@@ -21,8 +21,8 @@ export const navigations = [
     icon: <BsFillPeopleFill size={18} />,
   },
   {
-    label: "Example",
-    url: "/dashboard/example",
+    label: "Banner",
+    url: "/dashboard/banner",
     icon: <BsFillPeopleFill size={18} />,
   },
 ];

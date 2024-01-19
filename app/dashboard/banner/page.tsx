@@ -1,57 +1,65 @@
 "use client";
-import { deleteProduct, findAllProduct } from "@/app/api/product";
+import { deleteBanner, getAllBanner } from "@/app/api/banner";
+
 import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
 import Modal from "@/app/component/application-ui/Modal";
 import SpinLoading from "@/app/component/application-ui/Spinner";
 import Tables from "@/app/component/application-ui/Tables";
 import { useToastAlert } from "@/app/component/application-ui/Toast";
 import withAuth from "@/app/hook/withAuth";
-import { TProduct, TProductData } from "@/app/interface/product";
-import { numberWithCommas } from "@/app/utils/func";
+import { IBannerData, TBanner } from "@/app/interface/banner";
+
+import { BANNER_IMAGE_URL } from "@/app/utils/fileUrl";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { BsFillPencilFill, BsFillTrash3Fill, BsPlus } from "react-icons/bs";
 
-function Product() {
+function Banner() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { toastSuccess, toastError } = useToastAlert();
   const [modalConfirm, setModalConfirm] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number>(0);
-  const [page, setPage] = useState<number>(1);
-  const { isPending, data } = useQuery<TProductData>({
-    queryKey: ["fetch-all-product", page],
-    queryFn: async () => await findAllProduct({ page }),
+  const { isPending, data } = useQuery<IBannerData>({
+    queryKey: ["banner"],
+    queryFn: async () => await getAllBanner(),
   });
 
   const columns = useMemo(
     () => [
       {
-        label: "Sku",
-        key: "product_sku",
+        label: "Judul",
+        key: "banner_title",
       },
       {
-        label: "Nama Produk",
-        key: "product_name",
+        label: "Banner URL",
+        key: "banner_url",
       },
       {
-        label: "Stok",
-        key: "product_stock",
-      },
-      {
-        label: "Harga",
-        key: "product_price",
-        formatter: (item: TProduct) => {
-          return numberWithCommas(item?.product_price);
+        label: "Banner",
+        key: "banner_image",
+        formatter: (item: TBanner) => {
+          return (
+            <>
+              <Image
+                src={`${BANNER_IMAGE_URL}/${item.banner_image}`}
+                alt={item.banner_title}
+                width={100}
+                height={100}
+                className="w-28 h-24"
+              />
+            </>
+          );
         },
       },
       {
         label: "Aksi",
         key: "aksi",
-        formatter: (item: TProduct) => {
+        formatter: (item: TBanner) => {
           return (
             <div className="flex flex-row gap-1">
               <Link
@@ -80,15 +88,7 @@ function Product() {
     []
   );
 
-  const handleNext = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
-
-  const handlePrev = () => {
-    setPage((prevPage) => prevPage - 1);
-  };
-
-  const handleModalConfirm = (row: TProduct) => {
+  const handleModalConfirm = (row: TBanner) => {
     const id: number = row.id as number;
     setModalConfirm(!modalConfirm);
     setSelectedId(id);
@@ -97,12 +97,12 @@ function Product() {
   const mutation = useMutation({
     mutationFn: async () => {
       const id: number = selectedId as number;
-      await deleteProduct({ id });
+      await deleteBanner({ id });
     },
     onSuccess: () => {
       toastSuccess("Data berhasil dihapus");
       setModalConfirm(!modalConfirm);
-      queryClient.invalidateQueries({ queryKey: ["fetch-all-product"] });
+      queryClient.invalidateQueries({ queryKey: ["banner"] });
     },
     onError: (err: any) => {
       setModalConfirm(!modalConfirm);
@@ -116,26 +116,17 @@ function Product() {
         <button
           type="button"
           className="bg-gray-200 rounded-md flex p-2 group hover:bg-gray-300"
-          onClick={() => router.push("/dashboard/product/add")}
+          onClick={() => router.push("/dashboard/banner/add")}
         >
           <span className="flex flex-row text-sm text-gray-500 items-center group-hover:text-gray-600">
-            <BsPlus size={22} /> Add Product
+            <BsPlus size={22} /> Add Banner
           </span>
         </button>
       </div>
       {isPending ? (
         <SpinLoading />
       ) : (
-        <Tables
-          data={data?.data?.data}
-          pagination={true}
-          columns={columns}
-          current_page={data?.data?.current_page}
-          per_page={data?.data?.per_page}
-          total_data={data?.data?.total}
-          handleNext={handleNext}
-          handlePrev={handlePrev}
-        />
+        <Tables data={data?.data} pagination={false} columns={columns} />
       )}
 
       {/* modal konfirm */}
@@ -174,4 +165,4 @@ function Product() {
   );
 }
 
-export default withAuth(Product);
+export default withAuth(Banner);

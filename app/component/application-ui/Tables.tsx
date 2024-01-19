@@ -58,8 +58,8 @@ const Tables: FC<TData> = ({
                   {columns?.map((col, index) => {
                     return (
                       <td
-                        className="whitespace-nowrap px-4 py-2 text-gray-900"
-                        key={col.key}
+                        className="whitespace-wrap px-4 py-2 text-gray-900 max-w-sm"
+                        key={index}
                       >
                         {col.formatter ? col.formatter(d) : d[col.key]}
                       </td>

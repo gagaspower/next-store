@@ -10,6 +10,7 @@ import FileInput from "@/app/component/application-ui/form/FileInput";
 import SelectInput from "@/app/component/application-ui/form/SelectInput";
 import TextInput from "@/app/component/application-ui/form/TextInput";
 import TinyMce from "@/app/component/application-ui/form/TinyMce";
+import withAuth from "@/app/hook/withAuth";
 import { TCategoryData } from "@/app/interface/category";
 import { TProduct } from "@/app/interface/product";
 
@@ -666,4 +667,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default withAuth(AddProduct);

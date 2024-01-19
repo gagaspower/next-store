@@ -15,10 +15,24 @@ export const addCategory = async ({
 }) => {
   try {
     let response;
+    const formData = new FormData();
+    formData.append("category_name", data.category_name);
+    if (data.category_image) {
+      formData.append("category_image", data.category_image);
+    }
+
     if (id === 0) {
-      response = await instance.post(`/cat/create`, data);
+      response = await instance.post(`/cat/create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     } else {
-      response = await instance.put(`/cat/update/${id}`, data);
+      response = await instance.post(`/cat/update/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     }
     return response?.data;
   } catch (error: any | unknown) {

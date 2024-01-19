@@ -120,3 +120,5 @@ export const updateProduct = async ({
     throw error?.message;
   }
 };
+
+// for public index

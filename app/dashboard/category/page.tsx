@@ -1,5 +1,6 @@
 "use client";
 import { deleteCategory, findAllCategory } from "@/app/api/category";
+import { DefaultImageStore } from "@/app/asset/img";
 import {
   BtnAdd,
   BtnCancel,
@@ -13,7 +14,9 @@ import SpinLoading from "@/app/component/application-ui/Spinner";
 import Tables from "@/app/component/application-ui/Tables";
 import { useToastAlert } from "@/app/component/application-ui/Toast";
 import { TCategory, TCategoryData } from "@/app/interface/category";
+import { CATEGORY_IMAGE_URL } from "@/app/utils/fileUrl";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import React, { useMemo, useState } from "react";
@@ -40,6 +43,24 @@ const Category = () => {
       {
         label: "Slug",
         key: "category_slug",
+      },
+      {
+        label: "Logo",
+        key: "category_image",
+        formatter: (item: TCategory) => {
+          let ImageForCategory: any = DefaultImageStore;
+          if (item.category_image) {
+            ImageForCategory = CATEGORY_IMAGE_URL + "/" + item.category_image;
+          }
+          return (
+            <Image
+              src={ImageForCategory}
+              width={75}
+              height={75}
+              alt={item.category_name}
+            />
+          );
+        },
       },
       {
         label: "Aksi",
