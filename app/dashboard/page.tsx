@@ -1,14 +1,12 @@
 "use client";
-import React, { FC } from "react";
-import ContentWrapper from "../component/application-ui/ContentWrapper";
-import withAuth from "../hook/withAuth";
-
-const Home: FC = () => {
+import React from "react";
+import withAuth from "@/context/withAuth";
+function Dashboard() {
   return (
-    <ContentWrapper>
-      <div>Hello world</div>
-    </ContentWrapper>
+    <div>
+      <span>Hello world</span>
+    </div>
   );
-};
+}
 
-export default withAuth(Home);
+export default withAuth(Dashboard, { roles: ["admin"] });

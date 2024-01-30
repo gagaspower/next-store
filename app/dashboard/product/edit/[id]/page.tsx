@@ -1,21 +1,18 @@
 "use client";
-import { findAllCategory } from "@/app/api/category";
-import { showProduct, updateProduct } from "@/app/api/product";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
+import { findAllCategory } from "@/lib/category";
+import { showProduct, updateProduct } from "@/lib/product";
+import { BtnSubmit } from "@/components/application-ui/Button";
+import ContentWrapper from "@/components/application-ui/ContentWrapper";
 
-import { Jarak } from "@/app/component/application-ui/Spacing";
-import SpinLoading from "@/app/component/application-ui/Spinner";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import FileInput from "@/app/component/application-ui/form/FileInput";
-import SelectInput from "@/app/component/application-ui/form/SelectInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-import TinyMce from "@/app/component/application-ui/form/TinyMce";
-import withAuth from "@/app/hook/withAuth";
-import { TCategoryData } from "@/app/interface/category";
-import { TProduct } from "@/app/interface/product";
+import { Jarak } from "@/components/application-ui/Spacing";
+import SpinLoading from "@/components/application-ui/Spinner";
+import { useToastAlert } from "@/components/application-ui/Toast";
 
-import { MAX_FILE_SIZE, isValidFileType } from "@/app/utils/imageValidate";
+import withAuth from "@/context/withAuth";
+import { TCategoryData } from "@/interface/category";
+import { TProduct } from "@/interface/product";
+
+import { MAX_FILE_SIZE, isValidFileType } from "@/utils/imageValidate";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import Image from "next/image";
@@ -23,6 +20,20 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { BsFillTrash3Fill } from "react-icons/bs";
 import * as Yup from "yup";
+import dynamic from "next/dynamic";
+
+const FileInput = dynamic(
+  () => import("@/components/application-ui/form/FileInput")
+);
+const SelectInput = dynamic(
+  () => import("@/components/application-ui/form/SelectInput")
+);
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
+const TinyMce = dynamic(
+  () => import("@/components/application-ui/form/TinyMce")
+);
 
 type ProductAttr = {
   varian_group: string;

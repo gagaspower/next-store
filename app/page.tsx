@@ -1,24 +1,24 @@
 import React from "react";
+import withWebStore from "@/context/withWebStore";
+import dynamic from "next/dynamic";
+import { Jarak } from "@/components/application-ui/Spacing";
+const Slider = dynamic(() => import("@/components/public/Slider"));
+const Categories = dynamic(() => import("@/components/public/Categories"));
+const FeaturedProduct = dynamic(
+  () => import("@/components/public/FeaturedProduct")
+);
 
-import Slider from "./component/layouts/front/Slider";
-import Categories from "./component/layouts/front/Categories";
-import Shop from "./component/layouts/front/Shop";
-import { Jarak } from "./component/application-ui/Spacing";
-import withWebStore from "./hook/withWebStore";
-import Breadcrumbs from "./component/layouts/front/Breadcumbs";
-
-const HomePage = () => {
+function HomePage() {
   return (
     <>
-      <Breadcrumbs />
       <Slider />
       <section className="w-full md:max-w-6xl m-auto px-5">
         <Categories />
-        <Shop />
+        <FeaturedProduct />
       </section>
       <Jarak />
     </>
   );
-};
+}
 
 export default withWebStore(HomePage);

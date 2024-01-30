@@ -1,22 +1,29 @@
 "use client";
 
-import { createUser } from "@/app/api/users";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
+import { createUser } from "@/lib/users";
+import { BtnSubmit } from "@/components/application-ui/Button";
+import ContentWrapper from "@/components/application-ui/ContentWrapper";
 
-import { Jarak } from "@/app/component/application-ui/Spacing";
+import { Jarak } from "@/components/application-ui/Spacing";
 
-import { useToastAlert } from "@/app/component/application-ui/Toast";
+import { useToastAlert } from "@/components/application-ui/Toast";
 
-import SelectInput from "@/app/component/application-ui/form/SelectInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-
-import { roles } from "@/app/hook/useRole";
-import { TUser } from "@/app/interface/user";
+import { roles } from "@/hook/useRole";
+import { TUser } from "@/interface/user";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import React from "react";
 import * as Yup from "yup";
+import dynamic from "next/dynamic";
+import withAuth from "@/context/withAuth";
+
+const SelectInput = dynamic(
+  () => import("@/components/application-ui/form/SelectInput")
+);
+
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
 
 const AddUser = () => {
   const { toastSuccess, toastError } = useToastAlert();
@@ -149,4 +156,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default withAuth(AddUser, { roles: ["admin"] });

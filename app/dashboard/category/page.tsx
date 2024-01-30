@@ -1,26 +1,30 @@
 "use client";
-import { deleteCategory, findAllCategory } from "@/app/api/category";
-import { DefaultImageStore } from "@/app/asset/img";
+import { deleteCategory, findAllCategory } from "@/lib/category";
+import { DefaultImageStore } from "@/asset/img";
+
+import React, { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { TCategory, TCategoryData } from "@/interface/category";
+import { CATEGORY_IMAGE_URL } from "@/utils/const";
+
 import {
   BtnAdd,
   BtnCancel,
   BtnConfirm,
   BtnDelete,
   BtnEdit,
-} from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-import Modal from "@/app/component/application-ui/Modal";
-import SpinLoading from "@/app/component/application-ui/Spinner";
-import Tables from "@/app/component/application-ui/Tables";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import { TCategory, TCategoryData } from "@/app/interface/category";
-import { CATEGORY_IMAGE_URL } from "@/app/utils/fileUrl";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+} from "@/components/application-ui/Button";
+import withAuth from "@/context/withAuth";
 
-import React, { useMemo, useState } from "react";
-
+const Modal = dynamic(() => import("@/components/application-ui/Modal"));
+const SpinLoading = dynamic(
+  () => import("@/components/application-ui/Spinner")
+);
+const Tables = dynamic(() => import("@/components/application-ui/Tables"));
 const Category = () => {
   const { toastSuccess, toastError } = useToastAlert();
   const router = useRouter();
@@ -109,7 +113,7 @@ const Category = () => {
   };
 
   return (
-    <ContentWrapper>
+    <>
       <div className="flex flex-row justify-between mb-3 items-center">
         <h1 className="font-bold">Kategori Produk</h1>
         <BtnAdd
@@ -118,11 +122,11 @@ const Category = () => {
         />
       </div>
 
-      {isPending ? (
+      {/* {isPending ? (
         <SpinLoading />
-      ) : (
-        <Tables data={categories?.data} columns={columns} pagination={false} />
-      )}
+      ) : ( */}
+      <Tables data={categories?.data} columns={columns} pagination={false} />
+      {/* )} */}
 
       {/* modal confirm delete */}
       <Modal
@@ -141,8 +145,8 @@ const Category = () => {
         </>
       </Modal>
       {/* end: modal konfirm */}
-    </ContentWrapper>
+    </>
   );
 };
 
-export default Category;
+export default withAuth(Category, { roles: ["admin"] });

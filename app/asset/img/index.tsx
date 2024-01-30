@@ -1,6 +1,8 @@
 import CheckIcon from "./check-mark.png";
 import WarningIcon from "./warning.png";
 import MenuIcon from "./menu.png";
+import Box from "./box.png";
+import Logo from "./bag.png";
 
 // shop icon
 import GirlShopIcon from "./webstore/woman-clothes.png";
@@ -20,4 +22,6 @@ export {
   WomanHandBag,
   DefaultImageStore,
   MenuIcon,
+  Box,
+  Logo,
 };

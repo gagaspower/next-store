@@ -3,7 +3,7 @@ import {
   addAttributeValue,
   deleteAttributeValue,
   findAttributeWithParent,
-} from "@/app/api/attribute";
+} from "@/app/lib/attribute";
 
 import {
   BtnCancel,

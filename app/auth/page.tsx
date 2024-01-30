@@ -1,18 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { IAuthLogin } from "../interface/auth";
+import { IAuthLogin } from "@/interface/auth";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import TextInput from "../component/application-ui/form/TextInput";
+import TextInput from "@/components/application-ui/form/TextInput";
 
 import { useRouter } from "next/navigation";
-import { publicApi } from "../config/const";
+import { publicApi } from "@/utils/httpClient";
 
-import withAuth from "../hook/withAuth";
-import { useSessionContext } from "../context/sessionProvider";
+import withAuth from "@/context/withAuth";
+import { useSessionContext } from "@/context/sessionProvider";
+import Link from "next/link";
+import { BsArrowLeft } from "react-icons/bs";
 
 const LoginAuth = () => {
   const router = useRouter();
+
   const { sessionAuth, setSessionAuth } = useSessionContext();
   const [loading, setLoading] = useState<boolean>(false);
   const { roles } = sessionAuth.session_id;
@@ -86,9 +89,13 @@ const LoginAuth = () => {
 
   useEffect(() => {
     if (token) {
-      router.replace("/dashboard");
+      if (roles === "admin") {
+        router.push("/dashboard");
+      } else if (roles === "user") {
+        router.push("/account");
+      }
     }
-  }, [token, router]);
+  }, [token, router, roles]);
 
   const Spinner = () => {
     return (
@@ -169,10 +176,18 @@ const LoginAuth = () => {
               Daftar
             </a>
           </p>
+          <p>
+            <Link
+              href="/"
+              className="flex items-center text-sm font-light text-gray-500 dark:text-gray-400 gap-3"
+            >
+              <BsArrowLeft /> Kembali ke toko{" "}
+            </Link>
+          </p>
         </form>
       </div>
     </div>
   );
 };
 
-export default withAuth(LoginAuth);
+export default withAuth(LoginAuth, { roles: ["admin", "user"] });

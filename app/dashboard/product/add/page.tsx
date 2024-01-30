@@ -1,26 +1,37 @@
 "use client";
-import { findAllCategory } from "@/app/api/category";
-import { createProduct } from "@/app/api/product";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-
-import { Jarak } from "@/app/component/application-ui/Spacing";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import FileInput from "@/app/component/application-ui/form/FileInput";
-import SelectInput from "@/app/component/application-ui/form/SelectInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-import TinyMce from "@/app/component/application-ui/form/TinyMce";
-import withAuth from "@/app/hook/withAuth";
-import { TCategoryData } from "@/app/interface/category";
-import { TProduct } from "@/app/interface/product";
-
-import { MAX_FILE_SIZE, isValidFileType } from "@/app/utils/imageValidate";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { useEffect, useRef, useState } from "react";
+import * as Yup from "yup";
+import dynamic from "next/dynamic";
 import { useFormik } from "formik";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { findAllCategory } from "@/lib/category";
+import { createProduct } from "@/lib/product";
+import { BtnSubmit } from "@/components/application-ui/Button";
+
+import { Jarak } from "@/components/application-ui/Spacing";
+import { useToastAlert } from "@/components/application-ui/Toast";
+
+import withAuth from "@/context/withAuth";
+import { TCategoryData } from "@/interface/category";
+import { TProduct } from "@/interface/product";
+
+import { MAX_FILE_SIZE, isValidFileType } from "@/utils/imageValidate";
+
 import { BsFillTrash3Fill } from "react-icons/bs";
-import * as Yup from "yup";
+
+const FileInput = dynamic(
+  () => import("@/components/application-ui/form/FileInput")
+);
+const SelectInput = dynamic(
+  () => import("@/components/application-ui/form/SelectInput")
+);
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
+const TinyMce = dynamic(
+  () => import("@/components/application-ui/form/TinyMce")
+);
 
 type ProductAttr = {
   varian_group: string;
@@ -360,7 +371,7 @@ const AddProduct = () => {
 
   return (
     <>
-      <ContentWrapper>
+      <>
         <form>
           <div className="flex mb-3 border-b p-2 justify-between items-center">
             <h3 className="font-poppins font-bold">Tambah Produk</h3>
@@ -652,7 +663,7 @@ const AddProduct = () => {
           ) : null}
         </div>
         <Jarak />
-      </ContentWrapper>
+      </>
       <div className="sticky bottom-0 w-full bg-slate-50 shadow-lg p-5 z-20">
         <div className="flex justify-end">
           <BtnSubmit

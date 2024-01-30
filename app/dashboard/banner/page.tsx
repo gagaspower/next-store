@@ -1,15 +1,10 @@
 "use client";
-import { deleteBanner, getAllBanner } from "@/app/api/banner";
+import { deleteBanner, getAllBanner } from "@/lib/banner";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import withAuth from "@/context/withAuth";
+import { IBannerData, TBanner } from "@/interface/banner";
 
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-import Modal from "@/app/component/application-ui/Modal";
-import SpinLoading from "@/app/component/application-ui/Spinner";
-import Tables from "@/app/component/application-ui/Tables";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import withAuth from "@/app/hook/withAuth";
-import { IBannerData, TBanner } from "@/app/interface/banner";
-
-import { BANNER_IMAGE_URL } from "@/app/utils/fileUrl";
+import { BANNER_IMAGE_URL } from "@/utils/const";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -17,6 +12,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { BsFillPencilFill, BsFillTrash3Fill, BsPlus } from "react-icons/bs";
+import dynamic from "next/dynamic";
+
+const Modal = dynamic(() => import("@/components/application-ui/Modal"));
+const SpinLoading = dynamic(
+  () => import("@/components/application-ui/Spinner")
+);
+const Tables = dynamic(() => import("@/components/application-ui/Tables"));
 
 function Banner() {
   const router = useRouter();
@@ -111,7 +113,7 @@ function Banner() {
   });
 
   return (
-    <ContentWrapper>
+    <>
       <div className="flex mb-3">
         <button
           type="button"
@@ -161,8 +163,8 @@ function Banner() {
       </Modal>
 
       {/* end: modal konfirm */}
-    </ContentWrapper>
+    </>
   );
 }
 
-export default withAuth(Banner);
+export default withAuth(Banner, { roles: ["admin"] });

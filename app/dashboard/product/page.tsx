@@ -1,20 +1,23 @@
 "use client";
-import { deleteProduct, findAllProduct } from "@/app/api/product";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-import Modal from "@/app/component/application-ui/Modal";
-import SpinLoading from "@/app/component/application-ui/Spinner";
-import Tables from "@/app/component/application-ui/Tables";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import withAuth from "@/app/hook/withAuth";
-import { TProduct, TProductData } from "@/app/interface/product";
-import { numberWithCommas } from "@/app/utils/func";
+import { deleteProduct, findAllProduct } from "@/lib/product";
+
+import { useToastAlert } from "@/components/application-ui/Toast";
+import withAuth from "@/context/withAuth";
+import { TProduct, TProductData } from "@/interface/product";
+import { numberWithCommas } from "@/utils/func";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { BsFillPencilFill, BsFillTrash3Fill, BsPlus } from "react-icons/bs";
+import dynamic from "next/dynamic";
 
+const Tables = dynamic(() => import("@/components/application-ui/Tables"));
+const Modal = dynamic(() => import("@/components/application-ui/Modal"));
+const SpinLoading = dynamic(
+  () => import("@/components/application-ui/Spinner")
+);
 function Product() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -49,13 +52,32 @@ function Product() {
         },
       },
       {
+        label: "Varian Produk",
+        key: "varian",
+        formatter: (item: TProduct) => {
+          return (
+            <>
+              {item?.variants?.length > 0 ? (
+                <div className="inline-flex items-center justify-center gap-1 rounded bg-emerald-500 px-1.5 text-xs text-white">
+                  Available
+                </div>
+              ) : (
+                <div className="inline-flex items-center justify-center gap-1 rounded bg-pink-400 px-1.5 text-xs text-white">
+                  Unavailable
+                </div>
+              )}
+            </>
+          );
+        },
+      },
+      {
         label: "Aksi",
         key: "aksi",
         formatter: (item: TProduct) => {
           return (
             <div className="flex flex-row gap-1">
               <Link
-                href={`/dashboard/banner/edit/${item.id}`}
+                href={`/dashboard/product/edit/${item.id}`}
                 className="border border-gray-300 rounded-md p-2 hover:bg-gray-200"
               >
                 <span className="text-gray-500">
@@ -111,7 +133,7 @@ function Product() {
   });
 
   return (
-    <ContentWrapper>
+    <>
       <div className="flex mb-3">
         <button
           type="button"
@@ -170,8 +192,8 @@ function Product() {
       </Modal>
 
       {/* end: modal konfirm */}
-    </ContentWrapper>
+    </>
   );
 }
 
-export default withAuth(Product);
+export default withAuth(Product, { roles: ["admin"] });

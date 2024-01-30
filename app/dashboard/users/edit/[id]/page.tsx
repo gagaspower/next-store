@@ -1,23 +1,29 @@
 "use client";
 
-import { getUserById, updateUser } from "@/app/api/users";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
+import { getUserById, updateUser } from "@/lib/users";
+import { BtnSubmit } from "@/components/application-ui/Button";
 
-import { Jarak } from "@/app/component/application-ui/Spacing";
-import SpinLoading from "@/app/component/application-ui/Spinner";
+import { Jarak } from "@/components/application-ui/Spacing";
+import SpinLoading from "@/components/application-ui/Spinner";
 
-import { useToastAlert } from "@/app/component/application-ui/Toast";
+import { useToastAlert } from "@/components/application-ui/Toast";
 
-import SelectInput from "@/app/component/application-ui/form/SelectInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-import { roles } from "@/app/hook/useRole";
-import { TUser } from "@/app/interface/user";
+import { roles } from "@/hook/useRole";
+import { TUser } from "@/interface/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import * as Yup from "yup";
+import dynamic from "next/dynamic";
+import withAuth from "@/context/withAuth";
+const SelectInput = dynamic(
+  () => import("@/components/application-ui/form/SelectInput")
+);
+
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
 
 const EditUser = () => {
   const param = useParams<{ id: string }>();
@@ -115,7 +121,7 @@ const EditUser = () => {
   }, [currentUser]);
 
   return (
-    <ContentWrapper>
+    <>
       {isPending ? (
         <SpinLoading />
       ) : (
@@ -172,8 +178,8 @@ const EditUser = () => {
           />
         </form>
       )}
-    </ContentWrapper>
+    </>
   );
 };
 
-export default EditUser;
+export default withAuth(EditUser, { roles: ["admin"] });

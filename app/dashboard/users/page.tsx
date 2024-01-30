@@ -1,16 +1,20 @@
 "use client";
-import { deleteUser, findAllUser } from "@/app/api/users";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-import Modal from "@/app/component/application-ui/Modal";
-import SpinLoading from "@/app/component/application-ui/Spinner";
-import Tables from "@/app/component/application-ui/Tables";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import { TUser, TUserData } from "@/app/interface/user";
+import { deleteUser, findAllUser } from "@/lib/users";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import { TUser } from "@/interface/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { BsFillPencilFill, BsFillTrash3Fill, BsPlus } from "react-icons/bs";
+import dynamic from "next/dynamic";
+import withAuth from "@/context/withAuth";
+
+const Modal = dynamic(() => import("@/components/application-ui/Modal"));
+const SpinLoading = dynamic(
+  () => import("@/components/application-ui/Spinner")
+);
+const Tables = dynamic(() => import("@/components/application-ui/Tables"));
 
 function UserPage() {
   const router = useRouter();
@@ -105,7 +109,7 @@ function UserPage() {
   });
 
   return (
-    <ContentWrapper>
+    <>
       <div className="flex mb-3">
         <button
           type="button"
@@ -164,8 +168,8 @@ function UserPage() {
       </Modal>
 
       {/* end: modal konfirm */}
-    </ContentWrapper>
+    </>
   );
 }
 
-export default UserPage;
+export default withAuth(UserPage, { roles: ["admin"] });

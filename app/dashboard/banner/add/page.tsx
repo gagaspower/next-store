@@ -1,25 +1,30 @@
 "use client";
-import { addBanner } from "@/app/api/banner";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-import { Jarak } from "@/app/component/application-ui/Spacing";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import AreaInput from "@/app/component/application-ui/form/AreaInput";
-import FileInput from "@/app/component/application-ui/form/FileInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-import withAuth from "@/app/hook/withAuth";
-import { TBanner } from "@/app/interface/banner";
+import { addBanner } from "@/lib/banner";
+import { BtnSubmit } from "@/components/application-ui/Button";
 
-import {
-  BANNER_MAX_FILE_SIZE,
-  isValidFileType,
-} from "@/app/utils/imageValidate";
+import { Jarak } from "@/components/application-ui/Spacing";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import withAuth from "@/context/withAuth";
+import { TBanner } from "@/interface/banner";
+
+import { BANNER_MAX_FILE_SIZE, isValidFileType } from "@/utils/imageValidate";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { BsFillTrash3Fill } from "react-icons/bs";
 import * as Yup from "yup";
+import dynamic from "next/dynamic";
+
+const AreaInput = dynamic(
+  () => import("@/components/application-ui/form/AreaInput")
+);
+const FileInput = dynamic(
+  () => import("@/components/application-ui/form/FileInput")
+);
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
 
 const AddBanner = () => {
   const { toastSuccess, toastError } = useToastAlert();
@@ -131,76 +136,75 @@ const AddBanner = () => {
 
   return (
     <>
-      <ContentWrapper>
-        <form>
-          <div className="flex mb-3 border-b p-2 justify-between items-center">
-            <h3 className="font-poppins font-bold">Tambah Banner</h3>
-          </div>
+      <form>
+        <div className="flex mb-3 border-b p-2 justify-between items-center">
+          <h3 className="font-poppins font-bold">Tambah Banner</h3>
+        </div>
 
-          <TextInput
-            label="Judul"
-            type="text"
-            name="banner_title"
-            value={formik.values.banner_title}
-            onChange={formik.handleChange}
-            maxWidth="lg"
-            error={formik.errors.banner_title}
-          />
-          <Jarak />
-          <TextInput
-            label="Url"
-            type="text"
-            name="banner_url"
-            value={formik.values.banner_url}
-            onChange={formik.handleChange}
-            maxWidth="lg"
-            error={formik.errors.banner_url}
-          />
-          <Jarak />
-          <AreaInput
-            label="Deskripsi"
-            name="banner_desc"
-            value={formik.values.banner_desc}
-            onChange={formik.handleChange}
-            error={formik.errors.banner_desc}
-          />
-          <Jarak />
-
-          <Jarak />
-          <FileInput
-            label="Gambar Banner"
-            name="banner_image"
-            onChange={(e) => selectImage(e)}
-            maxWidth="lg"
-            inputRef={fileInputRef}
-            error={formik.errors.banner_image}
-          />
-        </form>
+        <TextInput
+          label="Judul"
+          type="text"
+          name="banner_title"
+          value={formik.values.banner_title}
+          onChange={formik.handleChange}
+          maxWidth="lg"
+          error={formik.errors.banner_title}
+        />
+        <Jarak />
+        <TextInput
+          label="Url"
+          type="text"
+          name="banner_url"
+          value={formik.values.banner_url}
+          onChange={formik.handleChange}
+          maxWidth="lg"
+          error={formik.errors.banner_url}
+        />
+        <Jarak />
+        <AreaInput
+          label="Deskripsi"
+          name="banner_desc"
+          value={formik.values.banner_desc}
+          onChange={formik.handleChange}
+          error={formik.errors.banner_desc}
+        />
         <Jarak />
 
-        {imgPreview && (
-          <div className="flex flex-col max-w-[100px]">
-            <Image
-              src={imgPreview}
-              alt="product-image"
-              width={100}
-              height={100}
-              className="bg-slate-300 p-2 rounded-md mb-1"
-            />
-            <button
-              type="button"
-              className="bg-slate-300 p-2 rounded-md"
-              onClick={handleRemoveImge}
-            >
-              <span className="text-sm flex flex-row items-center justify-center">
-                <BsFillTrash3Fill /> Hapus
-              </span>
-            </button>
-          </div>
-        )}
+        <Jarak />
+        <FileInput
+          label="Gambar Banner"
+          name="banner_image"
+          onChange={(e) => selectImage(e)}
+          maxWidth="lg"
+          inputRef={fileInputRef}
+          error={formik.errors.banner_image}
+        />
+      </form>
+      <Jarak />
 
-        <hr />
-      </ContentWrapper>
+      {imgPreview && (
+        <div className="flex flex-col max-w-[100px]">
+          <Image
+            src={imgPreview}
+            alt="product-image"
+            width={100}
+            height={100}
+            className="bg-slate-300 p-2 rounded-md mb-1"
+          />
+          <button
+            type="button"
+            className="bg-slate-300 p-2 rounded-md"
+            onClick={handleRemoveImge}
+          >
+            <span className="text-sm flex flex-row items-center justify-center">
+              <BsFillTrash3Fill /> Hapus
+            </span>
+          </button>
+        </div>
+      )}
+
+      <hr />
+
       <div className="sticky bottom-0 w-full bg-slate-50 shadow-lg p-5 z-20">
         <div className="flex justify-end">
           <BtnSubmit
@@ -215,4 +219,4 @@ const AddBanner = () => {
   );
 };
 
-export default withAuth(AddBanner);
+export default withAuth(AddBanner, { roles: ["admin"] });

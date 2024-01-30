@@ -1,21 +1,15 @@
 "use client";
-import { addBanner, detailBanner, updateBanner } from "@/app/api/banner";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
+import { detailBanner, updateBanner } from "@/lib/banner";
+import { BtnSubmit } from "@/components/application-ui/Button";
+import ContentWrapper from "@/components/application-ui/ContentWrapper";
 
-import { Jarak } from "@/app/component/application-ui/Spacing";
-import SpinLoading from "@/app/component/application-ui/Spinner";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import AreaInput from "@/app/component/application-ui/form/AreaInput";
-import FileInput from "@/app/component/application-ui/form/FileInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-import withAuth from "@/app/hook/withAuth";
-import { TBanner } from "@/app/interface/banner";
+import { Jarak } from "@/components/application-ui/Spacing";
+import SpinLoading from "@/components/application-ui/Spinner";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import withAuth from "@/context/withAuth";
+import { TBanner } from "@/interface/banner";
 
-import {
-  BANNER_MAX_FILE_SIZE,
-  isValidFileType,
-} from "@/app/utils/imageValidate";
+import { BANNER_MAX_FILE_SIZE, isValidFileType } from "@/utils/imageValidate";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import Image from "next/image";
@@ -23,6 +17,17 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { BsFillTrash3Fill } from "react-icons/bs";
 import * as Yup from "yup";
+import dynamic from "next/dynamic";
+
+const AreaInput = dynamic(
+  () => import("@/components/application-ui/form/AreaInput")
+);
+const FileInput = dynamic(
+  () => import("@/components/application-ui/form/FileInput")
+);
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
 
 const EditBanner = () => {
   const { toastSuccess, toastError } = useToastAlert();
@@ -252,4 +257,4 @@ const EditBanner = () => {
   );
 };
 
-export default withAuth(EditBanner);
+export default withAuth(EditBanner, { roles: ["admin"] });

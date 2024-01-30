@@ -1,19 +1,25 @@
 "use client";
-import { addCategory } from "@/app/api/category";
-import { BtnSubmit } from "@/app/component/application-ui/Button";
-import ContentWrapper from "@/app/component/application-ui/ContentWrapper";
-import { Jarak } from "@/app/component/application-ui/Spacing";
-import { useToastAlert } from "@/app/component/application-ui/Toast";
-import FileInput from "@/app/component/application-ui/form/FileInput";
-import TextInput from "@/app/component/application-ui/form/TextInput";
-import { TCategory } from "@/app/interface/category";
-import { MAX_FILE_SIZE, isValidFileType } from "@/app/utils/imageValidate";
+import { addCategory } from "@/lib/category";
+import { TCategory } from "@/interface/category";
+import { MAX_FILE_SIZE, isValidFileType } from "@/utils/imageValidate";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { BsFillTrash3Fill } from "react-icons/bs";
 import * as Yup from "yup";
+import dynamic from "next/dynamic";
+import { BtnSubmit } from "@/components/application-ui/Button";
+import { Jarak } from "@/components/application-ui/Spacing";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import withAuth from "@/context/withAuth";
+
+const FileInput = dynamic(
+  () => import("@/components/application-ui/form/FileInput")
+);
+const TextInput = dynamic(
+  () => import("@/components/application-ui/form/TextInput")
+);
 
 const AddCategory = () => {
   const { toastSuccess, toastError } = useToastAlert();
@@ -110,7 +116,7 @@ const AddCategory = () => {
   };
 
   return (
-    <ContentWrapper>
+    <>
       <div className="flex flex-row justify-between mb-3 items-center">
         <h1 className="font-bold">Tambah Kategori Produk</h1>
       </div>
@@ -167,8 +173,8 @@ const AddCategory = () => {
           />
         </div>
       </form>
-    </ContentWrapper>
+    </>
   );
 };
 
-export default AddCategory;
+export default withAuth(AddCategory, { roles: ["admin"] });
