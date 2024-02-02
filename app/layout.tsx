@@ -3,6 +3,9 @@ import "@/globals.css";
 import Providers from "@/context/providers";
 import { SessionProvider } from "@/context/sessionProvider";
 import NextTopLoader from "nextjs-toploader";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { CartProvider } from "./context/cart";
 
 export const metadata: Metadata = {
   title: {
@@ -46,9 +49,10 @@ export default function RootLayout({
         <Providers>
           <SessionProvider>
             <NextTopLoader />
-            {children}
+            <CartProvider>{children}</CartProvider>
           </SessionProvider>
         </Providers>
+        <ToastContainer />
       </body>
     </html>
   );

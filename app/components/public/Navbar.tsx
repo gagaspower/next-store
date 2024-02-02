@@ -5,10 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSessionContext } from "@/context/sessionProvider";
 import { instance } from "@/utils/httpClient";
+import { useCartContext } from "@/context/cart";
 
 function NavbarTop() {
   const { sessionAuth, setSessionAuth } = useSessionContext();
   const [isToggleOpen, setIsToggleOpen] = useState(false);
+  const { cart } = useCartContext();
 
   const { token, session_id } = sessionAuth;
 
@@ -18,6 +20,7 @@ function NavbarTop() {
       localStorage.removeItem("auth");
       setSessionAuth({
         session_id: {
+          id: 0,
           name: "",
           roles: "",
         },
@@ -104,8 +107,8 @@ function NavbarTop() {
 
             {/*      <!-- Actions --> */}
             <div className="ml-auto flex items-center justify-end px-6 lg:ml-0 lg:flex-1 lg:p-0 divide-x divide-gray-300 gap-5">
-              <a
-                href="#"
+              <Link
+                href="/cart"
                 className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-lg text-emerald-500"
               >
                 <svg
@@ -127,19 +130,22 @@ function NavbarTop() {
                   />
                 </svg>
                 <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-white bg-pink-500 px-1.5 text-sm text-white">
-                  2<span className="sr-only"> new emails </span>
+                  {cart?.length}
+                  <span className="sr-only"> new emails </span>
                 </span>
-              </a>
+              </Link>
 
               <div className="flex gap-5 pl-5 items-center">
                 {token ? (
                   <>
-                    <Link href="/#" className="">
-                      <span className="text-sm hover:underline">Akun</span>
+                    <Link href="/account" className="w-28">
+                      <span className="text-sm hover:underline">
+                        Member area
+                      </span>
                     </Link>
                     <button
                       type="button"
-                      className="w-32"
+                      className="w-20"
                       onClick={handleLogout}
                     >
                       <span className="text-sm hover:underline">Sign Out</span>

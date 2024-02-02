@@ -6,6 +6,7 @@ export interface Variants {
 }
 
 export type VariantStock = {
+  id?: number;
   product_varian_name: string;
   product_varian_stock: number;
   product_varian_price: number;

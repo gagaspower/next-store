@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 export interface ISessionData {
   session_id: {
+    id: number;
     name: string;
     roles: string;
   };
@@ -29,6 +30,7 @@ export const useSessionContext = (): IAuthContext => {
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [sessionAuth, setSessionAuth] = useState<ISessionData>({
     session_id: {
+      id: 0,
       name: "",
       roles: "",
     },

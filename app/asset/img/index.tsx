@@ -11,6 +11,9 @@ import BabyClothes from "./webstore/baby-clothes.png";
 import ManClothes from "./webstore/man-clothes.png";
 import WomanHandBag from "./webstore/woman-handbag.png";
 import DefaultImageStore from "./webstore/default.png";
+import Cart from "./cart.png";
+import Courier from "./delivery-man.png";
+import BankLogo from "./bank.png";
 
 export {
   CheckIcon,
@@ -24,4 +27,7 @@ export {
   MenuIcon,
   Box,
   Logo,
+  Cart,
+  BankLogo,
+  Courier,
 };

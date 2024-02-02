@@ -1,8 +1,6 @@
 "use client";
 import withAuth from "@/context/withAuth";
 import dynamic from "next/dynamic";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const DashboardLogo = dynamic(
   () => import("@/components/layouts/DashboardLogo")
@@ -41,7 +39,6 @@ function DashboardLayout({
           </ul>
         </div>
       </div>
-      <ToastContainer />
     </>
   );
 }

@@ -3,11 +3,20 @@ import { Jarak } from "@/components/application-ui/Spacing";
 import { TProduct } from "@/interface/product";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { PRODUCT_IMAGE_URL } from "@/utils/const";
 import { numberWithCommas } from "@/utils/func";
+import { useSessionContext } from "@/context/sessionProvider";
+import Modal from "@/components/application-ui/Modal";
+import { useToastAlert } from "@/components/application-ui/Toast";
+import { useCartContext } from "@/context/cart";
 
 function ProductDetailCard({ data }: { data: TProduct }) {
+  const { toastSuccess } = useToastAlert();
+  const { sessionAuth } = useSessionContext();
+  const { setCart } = useCartContext();
+  const [modalAuth, setModalAuth] = useState<boolean>(false);
+
   // menghitung total stok tersedia
   const sumStock: number =
     data.variants_stock.length > 0
@@ -24,14 +33,18 @@ function ProductDetailCard({ data }: { data: TProduct }) {
   }, 0);
 
   // mencari harga termahal
-  const maxPrice = data.variants_stock.reduce((max, p) => {
-    return p.product_varian_price > max ? p.product_varian_price : max;
-  }, 0);
+  // const maxPrice = data.variants_stock.reduce((max, p) => {
+  //   return p.product_varian_price > max ? p.product_varian_price : max;
+  // }, 0);
 
   const [varianSelections, setVarianSelections] = useState<any>({});
   const [qty, setQty] = useState<number>(1);
   const [defaultStock, setDefaultStock] = useState<number>(sumStock);
   const [priceSelect, setPriceSelect] = useState<number>(data.product_price);
+  const [selectedVariantsDetail, setSelectedVariantsDetail] = useState<any>({});
+  const [modalVariantConfirm, setModalVariantConfirm] =
+    useState<boolean>(false);
+  const [modalConfirmStock, setModalConfirmStock] = useState<boolean>(false);
 
   const theObj = { __html: data.product_desc };
 
@@ -42,7 +55,7 @@ function ProductDetailCard({ data }: { data: TProduct }) {
     }));
   };
 
-  const getVarianSelectionsString = () => {
+  const getVarianSelectionsString = useCallback(() => {
     const selectedVariants = Object.entries(varianSelections).filter(
       ([_, value]) => value
     );
@@ -51,10 +64,9 @@ function ProductDetailCard({ data }: { data: TProduct }) {
       .map(([_, value]) => `${value}`)
       .join(" | ")
       .trim();
-  };
+  }, [varianSelections]);
 
   const variantSelectionsString = getVarianSelectionsString();
-  console.log(variantSelectionsString);
 
   useEffect(() => {
     if (variantSelectionsString) {
@@ -64,12 +76,15 @@ function ProductDetailCard({ data }: { data: TProduct }) {
       if (findStok) {
         setDefaultStock(findStok?.product_varian_stock);
         setPriceSelect(findStok.product_varian_price);
+        setSelectedVariantsDetail(findStok);
       } else {
         setDefaultStock(sumStock);
+        setSelectedVariantsDetail({});
       }
     } else {
       setDefaultStock(sumStock);
       setPriceSelect(data.product_price);
+      setSelectedVariantsDetail({});
     }
   }, [variantSelectionsString]);
 
@@ -84,26 +99,27 @@ function ProductDetailCard({ data }: { data: TProduct }) {
   };
 
   const handleAddToCart = () => {
-    if (data.variants_stock.length > 1) {
-      const selectedVariants = Object.entries(varianSelections).filter(
-        ([_, value]) => value
-      );
-      if (selectedVariants.length === 0) {
-        alert("Untuk menghindari kesalahan, mohon pilih variasi produk");
-      } else if (
-        selectedVariants.length > 1 &&
-        !variantSelectionsString.includes(" | ")
-      ) {
-        alert("Untuk menghindari kesalahan, mohon pilih variasi produk");
-      } else {
-        const findStok = data.variants_stock.find(
-          (item, index) => item.product_varian_name === variantSelectionsString
-        )?.product_varian_stock;
-        const stokQty = findStok || 0;
-        if (qty > stokQty) {
-          alert("Jumlah melebihi stok tersedia");
-        }
-      }
+    if (!sessionAuth?.token) {
+      setModalAuth(true);
+    } else if (
+      data.variants_stock.length > 0 &&
+      Object.keys(selectedVariantsDetail).length === 0
+    ) {
+      setModalVariantConfirm(true);
+    } else if (qty > selectedVariantsDetail.product_varian_stock) {
+      setModalConfirmStock(true);
+    } else {
+      setCart((currentCart: any[]) => [
+        ...currentCart,
+        {
+          cart_product_id: data?.id,
+          cart_product_qty: qty,
+          cart_product_variant_id: selectedVariantsDetail?.id,
+          cart_user_id: sessionAuth?.session_id?.id,
+          product: data,
+        },
+      ]);
+      toastSuccess("Produk ditambahkan ke keranjang belanja");
     }
   };
 
@@ -246,6 +262,39 @@ function ProductDetailCard({ data }: { data: TProduct }) {
         <Jarak />
         <div dangerouslySetInnerHTML={theObj} className="prose" />
       </div>
+
+      {/* modal auth check */}
+      <Modal
+        isOpen={modalAuth}
+        handleClose={() => setModalAuth(false)}
+        title="Login dulu!"
+      >
+        <span className="text-sm">
+          Silahkan login terlebih dahulul untuk melakukan transaksi!
+        </span>
+      </Modal>
+
+      {/* modal check variant is selected */}
+      {/* modal auth check */}
+      <Modal
+        isOpen={modalVariantConfirm}
+        handleClose={() => setModalVariantConfirm(false)}
+        title="Info!!"
+      >
+        <span className="text-sm">
+          Untuk menghindari kesalahan, mohon pilih terlebih dahulu variasi
+          produk
+        </span>
+      </Modal>
+
+      {/* modal confirm stock check */}
+      <Modal
+        isOpen={modalConfirmStock}
+        handleClose={() => setModalConfirmStock(false)}
+        title="Info!!"
+      >
+        <span className="text-sm">Jumlah melebihi stok tersedia!</span>
+      </Modal>
     </>
   );
 }
