@@ -106,8 +106,10 @@ function AddAddress() {
       await instance.post(`/address/create`, formik.values);
       formik.resetForm();
       toastSuccess("Data berhasil disimpan");
+      setLoading(false);
     } catch (error) {
       toastError("Gagal menyimpan data");
+      setLoading(false);
     }
   };
 

@@ -9,10 +9,8 @@ import Link from "next/link";
 import React from "react";
 
 const AddressPage = () => {
-  const { sessionAuth } = useSessionContext();
   const { toastSuccess, toastError } = useToastAlert();
 
-  const { session_id } = sessionAuth;
   const queryClient = useQueryClient();
 
   const { data: address, isPending: addressLoading } = useQuery({

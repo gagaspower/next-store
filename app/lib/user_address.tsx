@@ -4,7 +4,7 @@ import { instance } from "@/utils/httpClient";
 export const getAddress = async (): Promise<IUserAddress | undefined> => {
   try {
     const response = await instance.get(`/user-address`);
-    console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.log("Error get address : ", error);

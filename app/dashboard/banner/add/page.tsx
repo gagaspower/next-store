@@ -118,7 +118,6 @@ const AddBanner = () => {
       banner_title: "",
       banner_desc: "",
       banner_url: "",
-
       banner_image: null,
     });
   };

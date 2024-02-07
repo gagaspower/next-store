@@ -44,7 +44,7 @@ function AccountLayout({ children }: { children: React.ReactNode }) {
               <span className="group-hover:text-white">Alamat Saya</span>
             </Link>
             <Link
-              href="#"
+              href="/account/history"
               className="text-sm group hover:bg-emerald-300 rounded-sm p-3"
             >
               <span className="group-hover:text-white">Riwayat Belanja</span>
