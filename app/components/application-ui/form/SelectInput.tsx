@@ -7,6 +7,7 @@ type TSelectProps = {
   onChangeInput: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   children: React.ReactNode;
   error?: any;
+  loading?: boolean;
 };
 
 const SelectInput: FC<TSelectProps> = ({
@@ -16,6 +17,7 @@ const SelectInput: FC<TSelectProps> = ({
   onChangeInput,
   children,
   error,
+  loading,
 }) => {
   return (
     <label className="form-control w-full max-w-lg">
@@ -30,7 +32,7 @@ const SelectInput: FC<TSelectProps> = ({
         name={name}
         value={value}
       >
-        <option value="0">pilih</option>
+        <option value="0">{loading ? "loading..." : "pilih"}</option>
         {children}
       </select>
       {error ? (

@@ -3,6 +3,7 @@ import ProductDetailCard from "./ProductDetailCard";
 import { publicApi } from "@/utils/httpClient";
 import type { Metadata } from "next";
 import { PRODUCT_IMAGE_URL } from "@/utils/const";
+import { TProduct } from "@/interface/product";
 
 async function getProductDetail({ slug }: { slug: string }) {
   const response = await publicApi.get(`/public/product-by-slug/${slug}`);
@@ -55,7 +56,7 @@ async function DetailProduct({ params }: { params: { slug: string } }) {
   return (
     <section className="w-full md:max-w-6xl m-auto px-5">
       <div className="bg-white my-3 p-3">
-        <ProductDetailCard data={product.data} />
+        <ProductDetailCard data={product.data as TProduct} />
       </div>
     </section>
   );

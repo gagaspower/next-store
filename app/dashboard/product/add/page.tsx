@@ -678,4 +678,4 @@ const AddProduct = () => {
   );
 };
 
-export default withAuth(AddProduct);
+export default withAuth(AddProduct, { roles: ["admin"] });

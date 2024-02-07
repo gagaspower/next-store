@@ -3,6 +3,8 @@ import WarningIcon from "./warning.png";
 import MenuIcon from "./menu.png";
 import Box from "./box.png";
 import Logo from "./bag.png";
+import ErrorImg from "./error.png";
+import SuccessImg from "./success.png";
 
 // shop icon
 import GirlShopIcon from "./webstore/woman-clothes.png";
@@ -30,4 +32,6 @@ export {
   Cart,
   BankLogo,
   Courier,
+  ErrorImg,
+  SuccessImg,
 };

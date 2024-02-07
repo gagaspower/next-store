@@ -1,7 +1,8 @@
 import React from "react";
 import withWebStore from "@/context/withWebStore";
 import dynamic from "next/dynamic";
-import { Jarak } from "@/components/application-ui/Spacing";
+import { Jarak } from "./components/application-ui/Spacing";
+
 const Slider = dynamic(() => import("@/components/public/Slider"));
 const Categories = dynamic(() => import("@/components/public/Categories"));
 const FeaturedProduct = dynamic(

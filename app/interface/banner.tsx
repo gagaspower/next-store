@@ -3,7 +3,7 @@ export type TBanner = {
   banner_title: string;
   banner_desc: string;
   banner_url: string;
-  banner_image: File | null;
+  banner_image: File | string | null;
 };
 
 export interface IBannerData {
@@ -15,15 +15,4 @@ export interface IBannerData {
     banner_url: string;
     banner_image: string | null;
   }[];
-}
-
-export interface IBanner {
-  message: string;
-  data: {
-    id?: number;
-    banner_title: string;
-    banner_desc: string;
-    banner_url: string;
-    banner_image: string | null;
-  };
 }

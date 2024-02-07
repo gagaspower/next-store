@@ -1,5 +1,12 @@
 import { BsGrid, BsShop, BsStack, BsFillPeopleFill } from "react-icons/bs";
-export const navigations = [
+
+interface INav {
+  label: string;
+  url: string;
+  icon: React.ReactNode;
+}
+
+export const navigations: INav[] = [
   {
     label: "Dashboard",
     url: "/dashboard",

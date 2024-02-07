@@ -18,6 +18,12 @@ const Modal = dynamic(() => import("@/components/application-ui/Modal"));
 const SpinLoading = dynamic(
   () => import("@/components/application-ui/Spinner")
 );
+
+type TColumns = {
+  label: string;
+  key: string;
+  formatter?: (item: TProduct) => React.ReactNode;
+};
 function Product() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -30,7 +36,7 @@ function Product() {
     queryFn: async () => await findAllProduct({ page }),
   });
 
-  const columns = useMemo(
+  const columns: TColumns[] = useMemo(
     () => [
       {
         label: "Sku",

@@ -39,7 +39,10 @@ const AddressPage = () => {
     <div className="p-2">
       <div className="flex justify-between">
         <span>Alamat saya: </span>
-        <Link href="#" className="text-sm text-blue-500 italic">
+        <Link
+          href="/account/address/add"
+          className="text-sm text-blue-500 italic"
+        >
           + Tambah alamat
         </Link>
       </div>
@@ -63,7 +66,7 @@ const AddressPage = () => {
                   type="checkbox"
                   className="toggle"
                   checked={alamat.isDefault ? true : false}
-                  onChange={() => mutation.mutate(alamat.id)}
+                  onChange={() => mutation.mutate(Number(alamat.id))}
                 />
               </div>
             </div>

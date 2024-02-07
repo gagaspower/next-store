@@ -6,7 +6,7 @@ interface WithAuthProps {
   roles: string[]; // Tambahkan properti roles
 }
 
-const withAuth = (Component: any, { roles }: WithAuthProps) => {
+const withAuth = (Component: FC<any>, { roles }: WithAuthProps) => {
   const Authenticated: FC = (props) => {
     const router = useRouter();
     const pathname = usePathname();

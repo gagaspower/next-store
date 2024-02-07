@@ -1,25 +1,21 @@
 "use client";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Glide from "@glidejs/glide";
 
 import { BANNER_IMAGE_URL } from "@/utils/const";
 import { publicApi } from "@/utils/httpClient";
-import { IBannerData } from "@/interface/banner";
+import { IBannerData, TBanner } from "@/interface/banner";
 
 export default function Slider() {
-  const [loading, setLoading] = useState<boolean>(false);
   const [banners, setBanners] = useState<IBannerData | undefined>(undefined);
 
   useEffect(() => {
     const getPublicBanner = async () => {
-      setLoading(true);
       try {
         const response = await publicApi.get<IBannerData>(`/public/banner`);
         setBanners(response?.data);
-        setLoading(false);
       } catch (error) {
         console.log("Error get image slide : ", error);
-        setLoading(false);
       }
     };
     getPublicBanner();
@@ -47,7 +43,7 @@ export default function Slider() {
       <div className="overflow-hidden" data-glide-el="track">
         <ul className="whitespace-no-wrap flex-no-wrap [backface-visibility: hidden] [transform-style: preserve-3d] [touch-action: pan-Y] [will-change: transform] relative flex w-full overflow-hidden p-0">
           {banners ? (
-            banners?.data?.map((banner: any, index: number) => {
+            banners?.data?.map((banner: TBanner, index: number) => {
               return (
                 <li key={index} className="">
                   <img

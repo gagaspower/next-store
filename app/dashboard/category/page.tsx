@@ -25,6 +25,13 @@ const SpinLoading = dynamic(
   () => import("@/components/application-ui/Spinner")
 );
 const Tables = dynamic(() => import("@/components/application-ui/Tables"));
+
+type TColumns = {
+  label: string;
+  key: string;
+  formatter?: (item: TCategory) => React.ReactNode;
+};
+
 const Category = () => {
   const { toastSuccess, toastError } = useToastAlert();
   const router = useRouter();
@@ -38,7 +45,7 @@ const Category = () => {
     queryFn: async () => await findAllCategory(),
   });
 
-  const columns = useMemo(
+  const columns: TColumns[] = useMemo(
     () => [
       {
         label: "Kategori",

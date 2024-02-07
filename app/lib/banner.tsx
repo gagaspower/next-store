@@ -1,5 +1,5 @@
 import { instance, publicApi } from "../utils/httpClient";
-import { IBanner, IBannerData, TBanner } from "../interface/banner";
+import { IBannerData, TBanner } from "../interface/banner";
 
 export const getAllBanner = async (): Promise<IBannerData> => {
   const response = await instance.get(`/banner`);
@@ -7,13 +7,20 @@ export const getAllBanner = async (): Promise<IBannerData> => {
   return response?.data;
 };
 
-export const addBanner = async ({ data }: { data: any }): Promise<IBanner> => {
+export const addBanner = async ({
+  data,
+}: {
+  data: Pick<
+    TBanner,
+    "banner_title" | "banner_desc" | "banner_url" | "banner_image"
+  >;
+}) => {
   try {
     const formData = new FormData();
     formData.append("banner_title", data.banner_title);
     formData.append("banner_desc", data.banner_desc);
     formData.append("banner_url", data.banner_url);
-    formData.append("banner_image", data.banner_image);
+    formData.append("banner_image", data.banner_image as File);
     const response = await instance.post(`/banner/create`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -25,7 +32,7 @@ export const addBanner = async ({ data }: { data: any }): Promise<IBanner> => {
   }
 };
 
-export const deleteBanner = async ({ id }: { id: number }): Promise<any> => {
+export const deleteBanner = async ({ id }: { id: number }) => {
   try {
     const res = await instance.delete(`/banner/delete/${id}`);
     return res.data;
@@ -48,8 +55,11 @@ export const updateBanner = async ({
   data,
 }: {
   id: number;
-  data: any;
-}): Promise<IBanner> => {
+  data: Pick<
+    TBanner,
+    "banner_title" | "banner_desc" | "banner_url" | "banner_image"
+  >;
+}) => {
   try {
     const formData = new FormData();
     formData.append("banner_title", data.banner_title);

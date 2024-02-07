@@ -5,14 +5,91 @@ import { instance } from "@/utils/httpClient";
 import { useParams } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
 
+interface IProductOrder {
+  id: number;
+  order_id: number;
+  product_id: number;
+  product_price: number;
+  product_qty: number;
+  product_variant_id: number;
+  product: {
+    id: number;
+    product_name: string;
+  };
+  product_variants: {
+    id: number;
+    product_varian_name: string;
+  };
+}
+
+interface ICurrentOrder {
+  id: number;
+  order_amount: number;
+  order_code: string;
+  order_date: Date;
+  order_status: string;
+  order_total_weight: number;
+  user_id: number;
+  user: {
+    id: number;
+    name: string;
+    roles: string;
+    email: string;
+    address: {
+      id: number;
+      address: string;
+      isDefault: boolean;
+      user_address_kab_id: number;
+      user_address_prov_id: number;
+      user_address_kodepos: string;
+      user_id: number;
+      kota: {
+        city_id: number;
+        city_name: string;
+        city_postal_code: string;
+        city_province_id: number;
+      };
+      provinsi: {
+        province_id: number;
+        province_name: string;
+      };
+    }[];
+  };
+  expedisi: {
+    id: number;
+    expedition_estimated: string;
+    expedition_name: string;
+    expedition_price: number;
+    expedition_servie: string;
+    order_id: number;
+  };
+  orders_detail: IProductOrder[];
+  payment_bank: {
+    id: number;
+    order_bank: string;
+    order_id: string;
+    payment_datetime: string;
+    payment_expired: string;
+    payment_gross_amount: number;
+    payment_merchant_id: string;
+    payment_provider: string;
+    payment_status: string;
+    payment_transaction_id: string;
+    payment_type: string;
+    payment_va_numbers: string;
+  };
+}
+
 function Transaction() {
   const params = useParams<{ code: string }>();
   const { code } = params;
 
-  const [currentOrder, setCurrentOrder] = useState<any>({});
+  const [currentOrder, setCurrentOrder] = useState<ICurrentOrder>(
+    {} as ICurrentOrder
+  );
 
   useEffect(() => {
-    const getOrderDetail = async () => {
+    const getOrderDetail = async (): Promise<ICurrentOrder | void> => {
       try {
         const response = await instance.get(`/order/detail/${code}`);
         setCurrentOrder(response?.data?.data);
@@ -23,8 +100,6 @@ function Transaction() {
 
     getOrderDetail();
   }, [code]);
-
-  console.log(currentOrder);
 
   return (
     <Suspense fallback={<span>Loading...</span>}>
@@ -80,7 +155,7 @@ function Transaction() {
             <tbody>
               {currentOrder &&
                 currentOrder?.orders_detail?.map(
-                  (detail: any, index: number) => {
+                  (detail: IProductOrder, index: number) => {
                     return (
                       <tr key={index}>
                         <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
@@ -105,8 +180,7 @@ function Transaction() {
                         <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
                           Rp.
                           {numberWithCommas(
-                            parseInt(detail?.product_qty) *
-                              parseInt(detail?.product_price)
+                            detail?.product_qty * detail?.product_price
                           )}
                         </td>
                       </tr>
@@ -138,7 +212,7 @@ function Transaction() {
                 <td className="h-12 px-6 text-sm font-medium border-t border-l first:border-l-0 stroke-slate-700 text-slate-700 ">
                   Rp.
                   {numberWithCommas(
-                    parseInt(currentOrder?.expedisi?.expedition_price)
+                    Number(currentOrder?.expedisi?.expedition_price)
                   )}
                 </td>
               </tr>
@@ -151,7 +225,7 @@ function Transaction() {
                   Total
                 </td>
                 <td className="h-12 px-6 text-sm font-medium border-t border-l first:border-l-0 stroke-slate-700 text-slate-700 ">
-                  Rp. {numberWithCommas(parseInt(currentOrder?.order_amount))}
+                  Rp. {numberWithCommas(Number(currentOrder?.order_amount))}
                 </td>
               </tr>
             </tfoot>

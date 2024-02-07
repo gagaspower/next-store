@@ -5,7 +5,7 @@ import Modal from "@/components/application-ui/Modal";
 import { Jarak } from "@/components/application-ui/Spacing";
 
 import SelectInput from "@/components/application-ui/form/SelectInput";
-import { useCartContext } from "@/context/cart";
+import { useCartContext } from "@/context/cartProvider";
 import withWebStore from "@/context/withWebStore";
 import { banks, expeditions } from "@/hook/useExpedition";
 import { VariantStock } from "@/interface/product";
@@ -145,7 +145,7 @@ function CartPage() {
         setExpeditionSelect("");
         setOrderLoading(false);
         const result = response?.data?.data;
-        router.push(`/transaction_success/${result?.orders?.order_code}`);
+        router.push(`/invoices/${result?.orders?.order_code}`);
       } catch (error) {
         setOrderLoading(false);
         console.log("error order : ", error);

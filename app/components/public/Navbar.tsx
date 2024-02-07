@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSessionContext } from "@/context/sessionProvider";
 import { instance } from "@/utils/httpClient";
-import { useCartContext } from "@/context/cart";
+import { useCartContext } from "@/context/cartProvider";
 
 function NavbarTop() {
   const { sessionAuth, setSessionAuth } = useSessionContext();

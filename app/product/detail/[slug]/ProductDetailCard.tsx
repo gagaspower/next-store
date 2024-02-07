@@ -1,6 +1,6 @@
 "use client";
 import { Jarak } from "@/components/application-ui/Spacing";
-import { TProduct } from "@/interface/product";
+import { TProduct, Variants } from "@/interface/product";
 
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
@@ -9,7 +9,16 @@ import { numberWithCommas } from "@/utils/func";
 import { useSessionContext } from "@/context/sessionProvider";
 import Modal from "@/components/application-ui/Modal";
 import { useToastAlert } from "@/components/application-ui/Toast";
-import { useCartContext } from "@/context/cart";
+import { ICartData, useCartContext } from "@/context/cartProvider";
+
+interface IVariantDetail {
+  id: number;
+  product_id: number;
+  product_varian_name: string;
+  product_varian_price: number;
+  product_varian_sku: string;
+  product_varian_stock: number;
+}
 
 function ProductDetailCard({ data }: { data: TProduct }) {
   const { toastSuccess } = useToastAlert();
@@ -32,16 +41,12 @@ function ProductDetailCard({ data }: { data: TProduct }) {
       : min;
   }, 0);
 
-  // mencari harga termahal
-  // const maxPrice = data.variants_stock.reduce((max, p) => {
-  //   return p.product_varian_price > max ? p.product_varian_price : max;
-  // }, 0);
-
   const [varianSelections, setVarianSelections] = useState<any>({});
   const [qty, setQty] = useState<number>(1);
   const [defaultStock, setDefaultStock] = useState<number>(sumStock);
   const [priceSelect, setPriceSelect] = useState<number>(data.product_price);
-  const [selectedVariantsDetail, setSelectedVariantsDetail] = useState<any>({});
+  const [selectedVariantsDetail, setSelectedVariantsDetail] =
+    useState<IVariantDetail>({} as IVariantDetail);
   const [modalVariantConfirm, setModalVariantConfirm] =
     useState<boolean>(false);
   const [modalConfirmStock, setModalConfirmStock] = useState<boolean>(false);
@@ -56,14 +61,16 @@ function ProductDetailCard({ data }: { data: TProduct }) {
   };
 
   const getVarianSelectionsString = useCallback(() => {
-    const selectedVariants = Object.entries(varianSelections).filter(
-      ([_, value]) => value
-    );
+    if (varianSelections) {
+      const selectedVariants = Object.entries(varianSelections).filter(
+        ([_, value]) => value
+      );
 
-    return selectedVariants
-      .map(([_, value]) => `${value}`)
-      .join(" | ")
-      .trim();
+      return selectedVariants
+        .map(([_, value]) => `${value}`)
+        .join(" | ")
+        .trim();
+    }
   }, [varianSelections]);
 
   const variantSelectionsString = getVarianSelectionsString();
@@ -71,20 +78,20 @@ function ProductDetailCard({ data }: { data: TProduct }) {
   useEffect(() => {
     if (variantSelectionsString) {
       const findStok = data.variants_stock.find(
-        (item, index) => item.product_varian_name === variantSelectionsString
+        (item) => item.product_varian_name === variantSelectionsString
       );
       if (findStok) {
         setDefaultStock(findStok?.product_varian_stock);
         setPriceSelect(findStok.product_varian_price);
-        setSelectedVariantsDetail(findStok);
+        setSelectedVariantsDetail(findStok as IVariantDetail);
       } else {
         setDefaultStock(sumStock);
-        setSelectedVariantsDetail({});
+        setSelectedVariantsDetail({} as IVariantDetail);
       }
     } else {
       setDefaultStock(sumStock);
       setPriceSelect(data.product_price);
-      setSelectedVariantsDetail({});
+      setSelectedVariantsDetail({} as IVariantDetail);
     }
   }, [variantSelectionsString]);
 
@@ -109,7 +116,7 @@ function ProductDetailCard({ data }: { data: TProduct }) {
     } else if (qty > selectedVariantsDetail.product_varian_stock) {
       setModalConfirmStock(true);
     } else {
-      setCart((currentCart: any[]) => [
+      setCart((currentCart: ICartData[]) => [
         ...currentCart,
         {
           cart_product_id: data?.id,
@@ -145,20 +152,21 @@ function ProductDetailCard({ data }: { data: TProduct }) {
           <Jarak />
           <div className="flex flex-col  gap-3">
             {data.variants.length > 0
-              ? data.variants.map((v, index) => {
+              ? data.variants.map((v: Variants, index: number) => {
                   return (
                     <div className="flex flex-col" key={index}>
                       <span className="text-gray-500 font-thin">
                         {v.varian_group} :
                       </span>
                       <div className="flex flex-row flex-wrap gap-2">
-                        {v.varian_item.split("|").map((val) => {
+                        {v.varian_item.split("|").map((val: string) => {
                           return (
                             <button
                               type="button"
                               key={val}
                               className={`bg-gray-100 rounded-sm p-1 group hover:border border-orange-500 hover:bg-white ${
-                                varianSelections[v.varian_group] === val
+                                varianSelections[v.varian_group as string] ===
+                                val
                                   ? "border border-orange-500 bg-white"
                                   : ""
                               }`}

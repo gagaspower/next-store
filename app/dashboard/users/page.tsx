@@ -16,6 +16,12 @@ const SpinLoading = dynamic(
 );
 const Tables = dynamic(() => import("@/components/application-ui/Tables"));
 
+type TColumns = {
+  label: string;
+  key: string;
+  formatter?: (item: TUser) => void;
+};
+
 function UserPage() {
   const router = useRouter();
   const { toastSuccess, toastError } = useToastAlert();
@@ -29,7 +35,7 @@ function UserPage() {
     queryFn: async () => await findAllUser({ page }),
   });
 
-  const columns = useMemo(
+  const columns: TColumns[] = useMemo(
     () => [
       {
         label: "Nama",
